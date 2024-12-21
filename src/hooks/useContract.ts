@@ -112,7 +112,7 @@ export const useGetActivity = (id: number) => {
 };
 
 // Write Hook Example
-export const useRegister = (_ref: BigInt, _newAcc: `0x${string}`, amt: BigInt) => {
+export const useRegister = (_ref:number, _newAcc: `0x${string}`, amt: BigInt) => {
     const [txHash, setTxHash] = useState<any>(null);
     const { writeContract, isSuccess, isPending, isError } = useWriteContract()
     //   const [isLoading, setIsLoading,] = useState(false)
@@ -121,7 +121,7 @@ export const useRegister = (_ref: BigInt, _newAcc: `0x${string}`, amt: BigInt) =
             address: byForexConfig.address as `0x${string}`,
             abi: byForexConfig.abi,
             functionName: "register",
-            args: [_ref, _newAcc, amt]
+            args: [BigInt(_ref), _newAcc, amt]
         });
         setTxHash(txHashx);
     };
