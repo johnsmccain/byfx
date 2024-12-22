@@ -1,6 +1,7 @@
 import { useAccount } from "wagmi"
 import { byForexConfig } from "../../abi"
 import {
+  useDistributeDividend,
   useGetDividendPool,
   // useGetDividendTime, useGetTotalUsers,
   useRegister,
@@ -28,15 +29,16 @@ console.log(investmentAmount)
   // const [ref, setRef] = useState<number>(0);
   // const [newAcc, setNewAcc] = useState<string>("");
   // const [amount, setAmount] = useState<number>(0);
-  const { register, isPending:isRegisterPending} = useRegister(referralCode, address as `0x${string}`, parseEther(investmentAmount));
+  const { register, isPending:isRegisterPending,   } = useRegister(BigInt(referralCode), address as `0x${string}`, parseEther(investmentAmount));
   const { upgrade: upgradeLevel,isPending:isUpgradePending } = useUpgrade();
+  const {distributeDividend} = useDistributeDividend()
   // const [value, setValue] = useState<bigint>(BigInt(0));
   const { approve,isPending:isApprovePending, } = useApprove(byForexConfig.address,  parseEther(investmentAmount));
   const { data: isApproved } = useAllowance(address, byForexConfig.address as `0x${string}`);
   const {data:userId} = useUserId(address as `0x${string}`)
   const {data:userInfo} = useUserInfo(userId as number)
  
- 
+ console.log("object")
   //   const [isLoading, setIsLoading,] = useState(false)
   
   const {data:getDividendPool} = useGetDividendPool()
@@ -82,13 +84,20 @@ console.log(investmentAmount)
     // setIsModalOpen(true)
     // alert(parsedUserInfo.level)
 
+    // alert(Number(parsedUserInfo.level)  === packageId +1)
+    // alert(packageId +1)
+    // alert((Number(parsedUserInfo.level) ) )
   };
 
   const handleRegister = async ()=>{
     await register()
+    // alert(balance)
   }
 
 
+  /**
+   * Approves the ERC20 contract to spend the user's investment amount
+   */
  const handleApprove = () => {
     approve();
   }
@@ -130,16 +139,21 @@ console.log(investmentAmount)
                   key={index}
                   onClick={() => { setInvestmentAmount(item); setPackageId(index + 1); }}
                   // onClick={() => { }}
-                  className={`text-black font-semibold p-4 cursor-pointer bg-neutral-400`}
+                  disabled={(Number(parsedUserInfo.level)) !== (index )}
+                  className={`py-2 px-4 rounded-md text-white font-semibold ${
+                    Number(parsedUserInfo.level) === (index ) ? 'bg-primary' : 'bg-gray-400 cursor-not-allowed'
+                  }`}
+                  // className={`text-black font-semibold p-4 cursor-pointer bg-neutral-400`}
                 >
                   ${item}
                 </button>
+                
               ))}
 
             </div>
             <div className="flex bg-neutral-200 rounded-md p-2 justify-between">
               <p>Total investments</p>
-              {/* <p className="text-primary">{userInfo ? formatBigInt(userInfo[2]) : 0}</p> */}
+              <p className="text-primary">${formatEther(parsedUserInfo.totalDeposit)}</p>
             </div>
             <button
               onClick={isApprove() ? handleApprove : handleInvest}
@@ -174,7 +188,7 @@ console.log(investmentAmount)
                   </p>
                   <button
                     className="rounded-lg border-2 border-primary text-primary py-1 px-3 font-semibold"
-                  // onClick={() => handlePoolClaim(poolId)}
+                  
                   >
                     Claim
                   </button>
@@ -191,14 +205,14 @@ console.log(investmentAmount)
               <div className="flex justify-between">
                 <p className="font-bold text-lg">Total income claim</p>
                 <p className="text-primary">${Number(parsedUserInfo.totalIncome)}</p>
-                {/* <p className="text-primary">${dashInfo?.totalIncomeClaim ? formatBigInt(dashInfo?.totalIncomeClaim) : 0}</p> */}
+                {/* <p className="text-primary">${Number(parsedUserInfo.totalIncome)}</p> */}
               </div>
               <div className="flex justify-between">
                 <p className="font-bold text-lg">Available income claim</p>
                 <p className="text-primary"></p>
-                {/* <p className="text-primary">${dashInfo?.availableIncomeClaim ? formatBigInt(dashInfo?.availableIncomeClaim) : 0}</p> */}
+                <p className="text-primary">${}</p>
               </div>
-              <div className="flex w-full justify-end"><button className="text-white text-xl font-semibold bg-primary w-fit py-1 px-4 rounded-md">Claim</button></div>
+              <div className="flex w-full justify-end"><button onClick={() => distributeDividend()} className="text-white text-xl font-semibold bg-primary w-fit py-1 px-4 rounded-md">Claim</button></div>
             </div>
           </div>
         </div>
@@ -247,6 +261,7 @@ console.log(investmentAmount)
             )}
             <div className="flex justify-end gap-4">
               <button
+
                 onClick={handleRegister}
                 className="bg-primary text-white py-2 px-4 rounded-md font-semibold"
               >

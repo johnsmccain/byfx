@@ -48,7 +48,7 @@ export function useUserInfo(id:number) {
 export function useDistributeDividend() {
     const { writeContract, isSuccess, isError } = useWriteContract()
     const [isLoading, setIsLoading,] = useState(false)
-    const write = async () => {
+    const distributeDividend = async () => {
         setIsLoading(true);
         await writeContract({
             address: byForexConfig.address as `0x${string}`,
@@ -59,7 +59,7 @@ export function useDistributeDividend() {
 
     }
 
-    return { write, isLoading, isSuccess, isError };
+    return { distributeDividend, isLoading, isSuccess, isError };
 }
 
 // Hook for 'getDividendTime' function
@@ -112,20 +112,20 @@ export const useGetActivity = (id: number) => {
 };
 
 // Write Hook Example
-export const useRegister = (_ref:number, _newAcc: `0x${string}`, amt: BigInt) => {
+export const useRegister = (_ref: BigInt, _newAcc: `0x${string}`, amt: BigInt) => {
     const [txHash, setTxHash] = useState<any>(null);
-    const { writeContract, isSuccess, isPending, isError } = useWriteContract()
+    const { writeContract, isSuccess, isPending, isError ,error,failureReason} = useWriteContract()
     //   const [isLoading, setIsLoading,] = useState(false)
     const register = async () => {
         const txHashx = writeContract({
             address: byForexConfig.address as `0x${string}`,
             abi: byForexConfig.abi,
             functionName: "register",
-            args: [BigInt(_ref), _newAcc, amt]
+            args: [_ref, _newAcc, amt]
         });
         setTxHash(txHashx);
     };
-    return { register, txHash, isSuccess, isPending, isError };
+    return { register, txHash, isSuccess, isPending, isError,error,failureReason };
 };
 
 
