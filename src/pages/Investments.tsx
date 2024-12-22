@@ -9,10 +9,11 @@ import {
   useUserId,
   useUserInfo
 } from "../hooks/useContract";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAllowance, useApprove } from "../hooks/useERC20Contract";
 import { formatEther, parseEther } from "viem";
 import { parseFinancialData, parseUserInfo } from "../utils/helper";
+import { useLocation } from "react-router-dom";
 // import formatAmount from "../utils";
 const packages = ["20", "40", "80", "160", "320", "640", "1280", "2560", "5120", "10240", "20480", "40960"]
 const Investments = () => {
@@ -46,6 +47,13 @@ console.log(investmentAmount)
 
   const parsedUserInfo = parseUserInfo([userInfo][0] || [])
   const parsedFinancialData = parseFinancialData([getDividendPool][0] || [])
+  const location = useLocation();
+
+  // Get the full URL
+  const fullURL = `${window.location.origin}${location.search}`;
+  const getfullURL = `${window.location.origin}?referral=${parsedUserInfo.id}`;
+
+ console.log(location.search.split('=')[1])
 
 // distributeDividend
 // const distributeDividend =() => {
@@ -109,7 +117,12 @@ console.log(investmentAmount)
 
 
 
-  //og(investmentAmount)
+  useEffect(() => {
+    if(location.search.split('=')[1]){
+      setReferralCode(Number(location.search.split('=')[1]))
+    }
+  }, [location.search.split('=')[1]])
+  
 
   return (
     <div className="px-3 md:px-28 py-20 flex flex-col ">
@@ -222,8 +235,8 @@ console.log(investmentAmount)
       <div className="bg-white w-full rounded-lg py-5 px-3 flex flex-col md:flex-row gap-5">
         <div className="w-full">
           <input
-            type="number"
-            value={Number(parsedUserInfo.id)}
+            type="text"
+            value={getfullURL}
             readOnly
             className="h-12 border-2 border-black rounded-lg w-full px-3 text-center font-semibold"
           />
