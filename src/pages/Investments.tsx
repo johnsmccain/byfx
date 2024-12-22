@@ -50,7 +50,7 @@ console.log(investmentAmount)
   const location = useLocation();
 
   // Get the full URL
-  const fullURL = `${window.location.origin}${location.search}`;
+  // const fullURL = `${window.location.origin}${location.search}`;
   const getfullURL = `${window.location.origin}?referral=${parsedUserInfo.id}`;
 
  console.log(location.search.split('=')[1])
