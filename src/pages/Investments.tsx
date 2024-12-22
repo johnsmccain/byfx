@@ -13,7 +13,7 @@ import React, { useEffect, useState } from "react";
 import { useAllowance, useApprove } from "../hooks/useERC20Contract";
 import { formatEther, parseEther } from "viem";
 import { parseFinancialData, parseUserInfo } from "../utils/helper";
-import { useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
 // import formatAmount from "../utils";
 const packages = ["20", "40", "80", "160", "320", "640", "1280", "2560", "5120", "10240", "20480", "40960"]
 const Investments = () => {
@@ -30,8 +30,8 @@ console.log(investmentAmount)
   // const [ref, setRef] = useState<number>(0);
   // const [newAcc, setNewAcc] = useState<string>("");
   // const [amount, setAmount] = useState<number>(0);
-  const { register, isPending:isRegisterPending,   } = useRegister(BigInt(referralCode), address as `0x${string}`, parseEther(investmentAmount));
-  const { upgrade: upgradeLevel,isPending:isUpgradePending } = useUpgrade();
+  const { register, isPending:isRegisterPending, isSuccess:isRegisterSuccess, isError:isRegisterError } = useRegister(BigInt(referralCode), address as `0x${string}`, parseEther(investmentAmount));
+  const { upgrade: upgradeLevel,isPending:isUpgradePending, isSuccess:isUpgradeSuccess, isError:isUpgradeError } = useUpgrade();
   const {distributeDividend} = useDistributeDividend()
   // const [value, setValue] = useState<bigint>(BigInt(0));
   const { approve,isPending:isApprovePending, } = useApprove(byForexConfig.address,  parseEther(investmentAmount));
@@ -39,21 +39,18 @@ console.log(investmentAmount)
   const {data:userId} = useUserId(address as `0x${string}`)
   const {data:userInfo} = useUserInfo(userId as number)
  
- console.log("object")
   //   const [isLoading, setIsLoading,] = useState(false)
-  
   const {data:getDividendPool} = useGetDividendPool()
   
 
   const parsedUserInfo = parseUserInfo([userInfo][0] || [])
   const parsedFinancialData = parseFinancialData([getDividendPool][0] || [])
-  const location = useLocation();
+
 
   // Get the full URL
   // const fullURL = `${window.location.origin}${location.search}`;
   const getfullURL = `${window.location.origin}?referral=${parsedUserInfo.id}`;
 
- console.log(location.search.split('=')[1])
 
 // distributeDividend
 // const distributeDividend =() => {
@@ -89,16 +86,12 @@ console.log(investmentAmount)
     //og(parseUserInfo([userInfo[0]]))
     // Number(parseUserInfo([userInfo][0]).level) >= 1? await register(): 
     Number(parsedUserInfo.level) >= 1? await upgradeLevel(BigInt(userId as number), BigInt("1"), parseEther(investmentAmount)) : setIsModalOpen(true) 
-    // setIsModalOpen(true)
-    // alert(parsedUserInfo.level)
 
-    // alert(Number(parsedUserInfo.level)  === packageId +1)
-    // alert(packageId +1)
-    // alert((Number(parsedUserInfo.level) ) )
   };
 
   const handleRegister = async ()=>{
     await register()
+
     // alert(balance)
   }
 
@@ -110,19 +103,39 @@ console.log(investmentAmount)
     approve();
   }
   const handleCopy = () => {
-    navigator.clipboard.writeText(userId as string).then(() => {
-      alert('Referral link copied to clipboard!');
+    navigator.clipboard.writeText(getfullURL).then(() => {
+      toast.success('Referral link copied to clipboard!');
     });
   };
 
 
 
+  const storedCode = localStorage.getItem('referralCode')
   useEffect(() => {
-    if(location.search.split('=')[1]){
-      setReferralCode(Number(location.search.split('=')[1]))
+    if(storedCode){
+      setReferralCode(JSON.parse(storedCode))
     }
-  }, [location.search.split('=')[1]])
-  
+
+  }, [storedCode])
+  useEffect(() => {
+    if(isUpgradeSuccess){
+      toast.success("Upgrading successful")
+    }
+    // }  else if(isRegisterPending){
+    //   toast.loading("Registering...")
+    // } else if(isUpgradePending){
+    //   toast.loading("Upgrading...")
+    // }
+    // else if(isUpgradeError){
+    //   toast.error('Upgrading failed')
+    // }
+    else  if(isRegisterSuccess){
+      toast.success("Registration successful")
+    } 
+    // else if(isRegisterError){
+    //   toast.error('Registration failed')
+    // }  
+  },[isUpgradeSuccess, isRegisterSuccess, isUpgradePending, isRegisterPending, isRegisterError, isUpgradeError])
 
   return (
     <div className="px-3 md:px-28 py-20 flex flex-col ">

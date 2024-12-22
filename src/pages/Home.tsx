@@ -1,8 +1,9 @@
 // import { ConnectButton } from "@rainbow-me/rainbowkit"
 // import { Packakges } from "../utils/constants"
 // import PackageCard from "../components/PackageCard"
+import { useEffect } from "react";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { useAccount } from "wagmi"
 
 const Home = () => {
@@ -20,6 +21,14 @@ const Home = () => {
   // const goRegister = () => {
   //   navigate('/register')
   // }
+  const location = useLocation();
+  
+  useEffect(() => {
+    if(location.search.split('=')[1]){
+      localStorage.setItem('referralCode', JSON.stringify(location.search.split('=')[1]));
+    }
+    console.log(localStorage.getItem('referralCode'))
+  }, [location.search.split('=')[1]])
 
   return (
     <div>

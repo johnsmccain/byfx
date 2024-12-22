@@ -154,7 +154,7 @@ export const useGetDirectTeamUsers = (_user: number) => {
      * @returns {Promise<void>}
      */
 export const useUpgrade = () => {
-    const { writeContract, isSuccess, isPending, isError } = useWriteContract()
+    const { writeContract, isSuccess, isPending, isError,failureReason,error } = useWriteContract()
 
     const upgrade = async (_id: BigInt, _lvls: BigInt, amt: BigInt) => {
         writeContract({
@@ -165,6 +165,6 @@ export const useUpgrade = () => {
         });
     };
 
-    return { upgrade, isSuccess, isPending, isError };
+    return { upgrade, isSuccess, isPending, isError, failureReason, error };
 };
 
