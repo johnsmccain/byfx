@@ -28,4 +28,11 @@ export interface UserInfo {
     eleventhValue: bigint;
     twelfthValue: bigint;
   }
+
+  export interface IncomeData {
+    firstValue: bigint;
+    secondValue: bigint;
+    thirdValue: bigint;
+    fourthValue: bigint;
+  }
   

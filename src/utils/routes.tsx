@@ -1,6 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
 import Home from "../pages/Home";
-import Investments from "../pages/Investments";
+
+import Dashboard from "../pages/Dashboard";
+import { ReferralsList } from "../pages/ReferralsList";
+import { InvestmentsList } from "../pages/InvestmentsList";
 
 export const route = createBrowserRouter([
   {
@@ -13,8 +16,16 @@ export const route = createBrowserRouter([
   // },
   {
     path: "investments",
-    element: <Investments />
+    element: <InvestmentsList />
   },
+  {
+    path: "dashboard",
+    element: <Dashboard />
+  },  {
+    path: "referals",
+    element: <ReferralsList />
+  },
+  
   // {
   //   path: "claims",
   //   element: <Claim />

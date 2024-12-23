@@ -5,23 +5,16 @@ import { useState } from 'react';
 
 
 // Hook for 'activity' function
-export function useActivity(id: number) {
+export function useActivity(id: bigint) {
     return useReadContract({
         address: byForexConfig.address as `0x${string}`,
         abi: byForexConfig.abi,
-        functionName: 'activity',
+        functionName: 'getRecentActivities',
         args: [id],
     });
 }
 
-// Hook for 'activity' function
-export function useGetDividendPool() {
-    return useReadContract({
-        address: byForexConfig.address as `0x${string}`,
-        abi: byForexConfig.abi,
-        functionName: 'getDividendPool'
-    }) as any;
-}
+
 
 // Hook for 'getUserId' function
 export function useUserId(userAddress:`0x${string}`) {
@@ -34,7 +27,7 @@ export function useUserId(userAddress:`0x${string}`) {
 }
 
 // Hook for 'getUserInfo' function
-export function useUserInfo(id:number) {
+export function useUserInfo(id:bigint) {
     return useReadContract({
         address: byForexConfig.address as `0x${string}`,
         abi: byForexConfig.abi,
@@ -71,38 +64,38 @@ export function useGetDividendTime() {
     });
 }
 
-// Hook for 'getTotalUsers' function
-export function useGetTotalUsers() {
-    return useReadContract({
-        address: byForexConfig.address as `0x${string}`,
-        abi: byForexConfig.abi,
-        functionName: 'getTotalUsers',
-    });
-}
+
+
+// // Hook for 'getTotalUsers' function
+// export function useGetTotalUsers() {
+//     return useReadContract({
+//         address: byForexConfig.address as `0x${string}`,
+//         abi: byForexConfig.abi,
+//         functionName: 'getTotalUsers',
+//     });
+// }
 
 // Hook for 'maxActivities' function
-export function useMaxActivities() {
+export function useMaxActivities(_num: bigint) {
     return useReadContract({
         address: byForexConfig.address as `0x${string}`,
         abi: byForexConfig.abi,
-        functionName: 'maxActivities',
+        functionName: 'getRecentActivities',
+        args: [_num],
     });
 }
 
-// Hook for 'timeForNextDividend' function
-export function useTimeForNextDividend() {
+export function useGetDividendPool() {
     return useReadContract({
         address: byForexConfig.address as `0x${string}`,
         abi: byForexConfig.abi,
-        functionName: 'timeForNextDividend',
-    });
+        functionName: 'getDividendPool',
+    }) as any;
 }
-
-
 
 
 // Read Hook Example
-export const useGetActivity = (id: number) => {
+export const useGetActivity = (id: bigint) => {
     return useReadContract({
         address: byForexConfig.address as `0x${string}`,
         abi: byForexConfig.abi,
@@ -112,7 +105,7 @@ export const useGetActivity = (id: number) => {
 };
 
 // Write Hook Example
-export const useRegister = (_ref: BigInt, _newAcc: `0x${string}`, amt: BigInt) => {
+export const useRegister = (_ref: bigint, _newAcc: `0x${string}`, amt: bigint) => {
     const [txHash, setTxHash] = useState<any>(null);
     const { writeContract, isSuccess, isPending, isError ,error,failureReason} = useWriteContract()
     //   const [isLoading, setIsLoading,] = useState(false)
@@ -129,15 +122,6 @@ export const useRegister = (_ref: BigInt, _newAcc: `0x${string}`, amt: BigInt) =
 };
 
 
-// Other Hooks Example
-export const useGetDirectTeamUsers = (_user: number) => {
-    return useReadContract({
-        address: byForexConfig.address as `0x${string}`,
-        abi: byForexConfig.abi,
-        functionName: "getDirectTeamUsers",
-        args: [_user],
-    });
-};
 
     /**
      * @description
@@ -155,8 +139,7 @@ export const useGetDirectTeamUsers = (_user: number) => {
      */
 export const useUpgrade = () => {
     const { writeContract, isSuccess, isPending, isError,failureReason,error } = useWriteContract()
-
-    const upgrade = async (_id: BigInt, _lvls: BigInt, amt: BigInt) => {
+    const upgrade = async (_id: bigint, _lvls: bigint, amt: bigint) => {
         writeContract({
             address: byForexConfig.address as `0x${string}`,
             abi: byForexConfig.abi,
@@ -164,7 +147,33 @@ export const useUpgrade = () => {
             args: [_id, _lvls, amt]
         });
     };
-
     return { upgrade, isSuccess, isPending, isError, failureReason, error };
 };
 
+// Hook for 'activity' function
+export function useGetDividendIncome(userId: bigint) {
+    return useReadContract({
+        address: byForexConfig.address as `0x${string}`,
+        abi: byForexConfig.abi,
+        functionName: 'getDividendIncome',
+        args: [userId],
+    }) as any;
+}
+// Other Hooks Example
+export const useGetDirectTeamUsers = (_user: bigint) => {
+    return useReadContract({
+        address: byForexConfig.address as `0x${string}`,
+        abi: byForexConfig.abi,
+        functionName: "getDirectTeamUsers",
+        args: [_user],
+    });
+};
+
+export function useGetRecentActivities(userId: bigint) {
+    return useReadContract({
+        address: byForexConfig.address as `0x${string}`,
+        abi: byForexConfig.abi,
+        functionName: 'getRecentActivities',
+        args: [userId],
+    });
+}

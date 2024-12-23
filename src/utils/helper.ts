@@ -1,4 +1,4 @@
-import { FinancialData, UserInfo } from "../types";
+import { FinancialData, IncomeData, UserInfo } from "../types";
 
 export function parseUserInfo(data: Array<any>): UserInfo {
   if (!Array.isArray(data) || data.length < 12) {
@@ -71,3 +71,24 @@ export function parseUserInfo(data: Array<any>): UserInfo {
     };
   }
   
+
+
+  export function parseIncomeData(data: Array<any>): IncomeData {
+    if (!Array.isArray(data) || data.length < 11) {
+      return {
+        firstValue: 0n,
+        secondValue: 0n,
+        thirdValue: 0n,
+        fourthValue: 0n,
+
+      };
+    }
+      return {
+        firstValue: data[0],
+        secondValue: data[1],
+        thirdValue: data[2],
+        fourthValue: data[3],
+
+      };
+    }
+    

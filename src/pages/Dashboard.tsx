@@ -1,8 +1,10 @@
 import { useAccount } from "wagmi"
 import { byForexConfig } from "../../abi"
 import {
-  useDistributeDividend,
-  useGetDividendPool,
+  useGetDividendIncome,
+  // useDistributeDividend,
+  // useGetDividendPool,
+  useGetDividendTime,
   // useGetDividendTime, useGetTotalUsers,
   useRegister,
   useUpgrade,
@@ -12,65 +14,47 @@ import {
 import React, { useEffect, useState } from "react";
 import { useAllowance, useApprove } from "../hooks/useERC20Contract";
 import { formatEther, parseEther } from "viem";
-import { parseFinancialData, parseUserInfo } from "../utils/helper";
+import {  parseIncomeData, parseUserInfo } from "../utils/helper";
 import toast from "react-hot-toast";
+import { convertTimestampToDate } from "../utils";
+import Navbar from "../components/Navbar";
 // import formatAmount from "../utils";
 const packages = ["20", "40", "80", "160", "320", "640", "1280", "2560", "5120", "10240", "20480", "40960"]
-const Investments = () => {
-  const [investmentAmount, setInvestmentAmount] = useState<string>("20");
+const Dashboard = () => {
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const [referralCode, setReferralCode] = useState(1000);
   const [errorMessage, setErrorMessage] = useState('');
-  const [_, setPackageId] = useState<number>(0);
-  // const { writeContract } = useWriteContract()
-console.log(investmentAmount)
+  
   const { address } = useAccount()
-  //og("address")
-
-  // const [ref, setRef] = useState<number>(0);
-  // const [newAcc, setNewAcc] = useState<string>("");
-  // const [amount, setAmount] = useState<number>(0);
-  const { register, isPending:isRegisterPending, isSuccess:isRegisterSuccess, isError:isRegisterError } = useRegister(BigInt(referralCode), address as `0x${string}`, parseEther(investmentAmount));
+  
   const { upgrade: upgradeLevel,isPending:isUpgradePending, isSuccess:isUpgradeSuccess, isError:isUpgradeError } = useUpgrade();
-  const {distributeDividend} = useDistributeDividend()
+  // const {distributeDividend} = useDistributeDividend()
   // const [value, setValue] = useState<bigint>(BigInt(0));
-  const { approve,isPending:isApprovePending, } = useApprove(byForexConfig.address,  parseEther(investmentAmount));
   const { data: isApproved } = useAllowance(address, byForexConfig.address as `0x${string}`);
   const {data:userId} = useUserId(address as `0x${string}`)
-  const {data:userInfo} = useUserInfo(userId as number)
- 
+  const {data:userInfo} = useUserInfo(userId as bigint)
+  const parsedUserInfo = parseUserInfo([userInfo][0] || [])
+  // const {data:getDividendPool} = useGetDividendPool()
+  // const parsedFinancialData = parseFinancialData([getDividendPool][0] || [])
+  const [packageId, setPackageId] = useState<number>((Number(parsedUserInfo.level)));
+  const [investmentAmount, setInvestmentAmount] = useState<string>(packages[packageId]);
+  const { approve,isPending:isApprovePending, } = useApprove(byForexConfig.address,  parseEther(investmentAmount));
+  const { register, isPending:isRegisterPending, isSuccess:isRegisterSuccess, isError:isRegisterError } = useRegister(BigInt(referralCode), address as `0x${string}`, parseEther(investmentAmount));
+  const {data:getDividendTime} = useGetDividendTime()
+  const {data:getDividendIncome} = useGetDividendIncome(parsedUserInfo.id);
+  const parsedUserIncome = parseIncomeData([getDividendIncome][0] || [])
+
+
   //   const [isLoading, setIsLoading,] = useState(false)
-  const {data:getDividendPool} = useGetDividendPool()
   
 
-  const parsedUserInfo = parseUserInfo([userInfo][0] || [])
-  const parsedFinancialData = parseFinancialData([getDividendPool][0] || [])
-
+console.log(convertTimestampToDate(Number(getDividendTime)))
 
   // Get the full URL
   // const fullURL = `${window.location.origin}${location.search}`;
   const getfullURL = `${window.location.origin}?referral=${parsedUserInfo.id}`;
-
-
-// distributeDividend
-// const distributeDividend =() => {
-//   writeContract({ 
-//     address: byForexConfig.address as `0x${string}`,
-//     abi: byForexConfig.abi,
-//     functionName: 'distributeDividend',
-//  })
-// }
-
-
-// transferOwnership
-// const transferOwnership =() => {
-//   writeContract({ 
-//     address: byForexConfig.address as `0x${string}`,
-//     abi: byForexConfig.abi,
-//     functionName: 'transferOwnership',
-//     args:[address]
-//  })
-// }
 
   const isApprove =() => Number(isApproved) < Number(parseEther(investmentAmount))
   // alert(Number(isApproved) < Number(parseEther(investmentAmount)))
@@ -85,7 +69,7 @@ console.log(investmentAmount)
   const handleInvest = async () => {
     //og(parseUserInfo([userInfo[0]]))
     // Number(parseUserInfo([userInfo][0]).level) >= 1? await register(): 
-    Number(parsedUserInfo.level) >= 1? await upgradeLevel(BigInt(userId as number), BigInt("1"), parseEther(investmentAmount)) : setIsModalOpen(true) 
+    Number(parsedUserInfo.level) >= 1? await upgradeLevel(BigInt(userId as bigint), BigInt("1"), parseEther(investmentAmount)) : setIsModalOpen(true) 
 
   };
 
@@ -115,30 +99,27 @@ console.log(investmentAmount)
     if(storedCode){
       setReferralCode(JSON.parse(storedCode))
     }
-
   }, [storedCode])
+
   useEffect(() => {
     if(isUpgradeSuccess){
       toast.success("Upgrading successful")
     }
-    // }  else if(isRegisterPending){
-    //   toast.loading("Registering...")
-    // } else if(isUpgradePending){
-    //   toast.loading("Upgrading...")
-    // }
-    // else if(isUpgradeError){
-    //   toast.error('Upgrading failed')
-    // }
     else  if(isRegisterSuccess){
       toast.success("Registration successful")
     } 
-    // else if(isRegisterError){
-    //   toast.error('Registration failed')
-    // }  
   },[isUpgradeSuccess, isRegisterSuccess, isUpgradePending, isRegisterPending, isRegisterError, isUpgradeError])
+useEffect(() => {
+  // setPackageId(Number(parsedUserInfo.level))
+  setInvestmentAmount(packages[Number(parsedUserInfo.level)])
+  
+},[parsedUserInfo.level])
+// console.log(packageId)
 
   return (
-    <div className="px-3 md:px-28 py-20 flex flex-col ">
+    <div className="">
+      <Navbar/>
+    <div className="px-3 md:px-28 py-20 flex flex-col  pt-20">
       <div className="h-screen w-full fixed top-0 left-0 flex justify-center flex-col items-center">
         <div className="md:-top-10 -top-5 absolute">
           <img src="/svgs/OFF.svg" alt="off img" />
@@ -156,7 +137,7 @@ console.log(investmentAmount)
 
       <div className="flex gap-5 z-20 flex-col">
         <div>
-          <p className="text-2xl py-4 md:text-4xl text-white font-bold">Investments</p>
+          <p className="text-2xl py-4 md:text-4xl text-white font-bold">Purchase Slot</p>
           <div className="bg-white w-full rounded-lg py-5 px-3 flex flex-col gap-5">
             <div className="w-full gap-2 justify-evenly flex flex-wrap">
 
@@ -167,7 +148,7 @@ console.log(investmentAmount)
                   // onClick={() => { }}
                   disabled={(Number(parsedUserInfo.level)) !== (index )}
                   className={`py-2 px-4 rounded-md text-white font-semibold ${
-                    Number(parsedUserInfo.level) === (index ) ? 'bg-primary' : 'bg-gray-400 cursor-not-allowed'
+                    Number(parsedUserInfo.level) === (index ) ? 'bg-primary cursor-pointer' : 'bg-gray-400 cursor-not-allowed'
                   }`}
                   // className={`text-black font-semibold p-4 cursor-pointer bg-neutral-400`}
                 >
@@ -178,14 +159,13 @@ console.log(investmentAmount)
 
             </div>
             <div className="flex bg-neutral-200 rounded-md p-2 justify-between">
-              <p>Total investments</p>
+              <p>Total slot Purchased</p>
               <p className="text-primary">${formatEther(parsedUserInfo.totalDeposit)}</p>
             </div>
             <button
               onClick={isApprove() ? handleApprove : handleInvest}
               // disabled={  Number(parseEther(investmentAmount)) === 0}
-              className={`bg-primary w-full py-2 rounded-lg text-lg font-semibold text-white outline-none opacity-50 cursor-not-allowed
-                }`}
+              className={`w-full py-2 rounded-lg text-lg font-semibold bg-primary ${isApprovePending || isRegisterPending || isUpgradePending?"outline-none opacity-50 cursor-not-allowed":"  text-white cursor-pointer"}`}
             >
               {isApprovePending || isRegisterPending || isUpgradePending
                 ? 'Confirming...'
@@ -202,12 +182,15 @@ console.log(investmentAmount)
         {/* transferOwnership */}
         {/* <button className="bg-green-700 cursor-pointer w-full py-2 rounded-lg text-lg font-semibold text-white outline-none" onClick={transferOwnership}>transferOwnership</button> */}
         <div>
+          <div className="flex items-center justify-between">
           <p className="text-2xl py-4 md:text-4xl text-white font-bold">Pool Claim</p>
+          <p className="text-2xl py-4 md:text-4xl text-white font-bold">Pool Closes At {convertTimestampToDate(Number(getDividendTime))}</p>
+          </div>
           <div className="bg-white w-full rounded-lg py-5 px-3">
             <div className="flex flex-col gap-3">
-              {[parsedFinancialData.firstValue, parsedFinancialData.secondValue, parsedFinancialData.thirdValue, parsedFinancialData.fourthValue].map((poolBalance, index) => (
+              {[parsedUserIncome.firstValue, parsedUserIncome.secondValue, parsedUserIncome.thirdValue, parsedUserIncome.fourthValue].map((poolBalance, index) => (
                 <div key={index} className="bg-neutral-200 flex justify-between p-2 rounded-lg">
-                  <p className="text-lg font-semibold my-auto">Pool {index}</p>
+                  <p className="text-lg font-semibold my-auto">Pool {index +1}</p>
                   <p className="text-primary">
                     {/* ${dashInfo?.poolsClaim ? formatBigInt(dashInfo.poolsClaim[poolId - 1]) : 0} */}
                     {formatEther(poolBalance)}
@@ -216,7 +199,7 @@ console.log(investmentAmount)
                     className="rounded-lg border-2 border-primary text-primary py-1 px-3 font-semibold"
                   
                   >
-                    Claim
+                    Ineligible
                   </button>
                 </div>
               ))}
@@ -229,16 +212,16 @@ console.log(investmentAmount)
           <div className="flex flex-col gap-3">
             <div className=" bg-white w-full rounded-lg py-5 px-3 flex flex-col gap-5 ">
               <div className="flex justify-between">
-                <p className="font-bold text-lg">Total income claim</p>
+                <p className="font-bold text-lg">Total income claimed</p>
                 <p className="text-primary">${Number(parsedUserInfo.totalIncome)}</p>
                 {/* <p className="text-primary">${Number(parsedUserInfo.totalIncome)}</p> */}
               </div>
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <p className="font-bold text-lg">Available income claim</p>
                 <p className="text-primary"></p>
                 <p className="text-primary">${}</p>
-              </div>
-              <div className="flex w-full justify-end"><button onClick={() => distributeDividend()} className="text-white text-xl font-semibold bg-primary w-fit py-1 px-4 rounded-md">Claim</button></div>
+              </div> */}
+              {/* <div className="flex w-full justify-end"><button onClick={() => distributeDividend()} className="text-white text-xl font-semibold bg-primary w-fit py-1 px-4 rounded-md">Eligible</button></div> */}
             </div>
           </div>
         </div>
@@ -308,7 +291,9 @@ console.log(investmentAmount)
       )}
 
     </div>
+    </div>
+
   )
 }
 
-export default Investments
+export default Dashboard

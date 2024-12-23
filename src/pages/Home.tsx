@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom"
 import { useAccount } from "wagmi"
+import Navbar from "../components/Navbar";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const Home = () => {
     if(!isConnected) {
       return toast.error('Please connect your wallet to continue');
     }
-    navigate('/investments')
+    navigate('/dashboard')
   }
   // register page
   // const goRegister = () => {
@@ -32,6 +33,7 @@ const Home = () => {
 
   return (
     <div>
+       <Navbar />
       <div className=" w-full fixed top-0 left-0 flex justify-center flex-col items-center">
         <div className="md:-top-10 -top-5 absolute">
           <img src="/svgs/OFF.svg" alt="off img" />
