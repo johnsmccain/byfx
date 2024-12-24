@@ -115,6 +115,9 @@ useEffect(() => {
   
 },[parsedUserInfo.level])
 // console.log(packageId)
+useEffect(() => {
+  
+})
 
   return (
     <div className="">
@@ -199,7 +202,7 @@ useEffect(() => {
                     className="rounded-lg border-2 border-primary text-primary py-1 px-3 font-semibold"
                   
                   >
-                    Ineligible
+                    {formatEther(poolBalance) === '0' ? 'Ineligible' : 'Eligible'}
                   </button>
                 </div>
               ))}
