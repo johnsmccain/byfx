@@ -133,7 +133,7 @@ useEffect(() => {
 
 useEffect(() => {
   if(isRegisterError){
-    toast.error("Try Again")
+    toast.error("Check Your Wallet balance and Try Again")
   }
   if(isApproveError){
     toast.error("Check Your Wallet balance and Try Again")
