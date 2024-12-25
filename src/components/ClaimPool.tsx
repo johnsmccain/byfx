@@ -1,8 +1,8 @@
 import React from 'react';
-import { Investment } from '../types/investment';
+// import { Investment } from '../types/investment';
 
 interface ClaimPoolProps {
-  investment: Investment;
+  investment: any;
   onClaim: () => void;
 }
 

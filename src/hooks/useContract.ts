@@ -1,5 +1,5 @@
 // src/hooks/useContract.ts
-import { useReadContract,  useWriteContract } from 'wagmi';
+import { useReadContract,    useWriteContract } from 'wagmi';
 import { byForexConfig } from '../../abi';
 import { useState } from 'react';
 
@@ -138,16 +138,19 @@ export const useRegister = (_ref: bigint, _newAcc: `0x${string}`, amt: bigint) =
      * @returns {Promise<void>}
      */
 export const useUpgrade = () => {
-    const { writeContract, isSuccess, isPending, isError,failureReason,error } = useWriteContract()
+    const { writeContract, isSuccess, isPending, isError,failureReason,error, data} = useWriteContract()
+    // useWaitForTransactionReceipt()
     const upgrade = async (_id: bigint, _lvls: bigint, amt: bigint) => {
         writeContract({
             address: byForexConfig.address as `0x${string}`,
             abi: byForexConfig.abi,
             functionName: "upgrade",
-            args: [_id, _lvls, amt]
+            args: [_id, _lvls, amt],
+
         });
     };
-    return { upgrade, isSuccess, isPending, isError, failureReason, error };
+
+    return { upgrade, isSuccess, isPending, isError, failureReason, error, data };
 };
 
 // Hook for 'activity' function

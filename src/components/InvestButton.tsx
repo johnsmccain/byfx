@@ -1,5 +1,5 @@
 import { useAccount } from 'wagmi';
-import { useInvestment } from '../hooks/useInvestment';
+// import { useInvestment } from '../hooks/useInvestment';
 
 interface InvestButtonProps {
   amount: number;
@@ -8,13 +8,13 @@ interface InvestButtonProps {
   className?: string;
 }
 
-export const InvestButton = ({ amount, referrerId, disabled, className }: InvestButtonProps) => {
+export const InvestButton = ({  referrerId, disabled, className }: InvestButtonProps) => {
   const { address } = useAccount();
-  const { invest } = useInvestment();
+  // const { invest } = useInvestment();
 
   const handleClick = async () => {
     try {
-      await invest(amount, referrerId);
+      // await invest(amount, referrerId);
     } catch (error) {
       console.error('Investment failed:', error);
     }

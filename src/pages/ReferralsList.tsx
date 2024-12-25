@@ -7,19 +7,13 @@ import { useAccount } from 'wagmi';
 import { useGetDirectTeamUsers, useUserId, useUserInfo } from '../hooks/useContract';
 import { parseUserInfo } from '../utils/helper';
 
-type Referral = {
-  id: string;
-  userId: string;
-  date: string;
-  status: string;
-  earnings: number;
-};
-
-const mockReferrals: Referral[] = [
-  { id: '1', userId: 'USER456', date: '2024-03-15', status: 'Active', earnings: 50 },
-  { id: '2', userId: 'USER789', date: '2024-03-14', status: 'Active', earnings: 75 },
-  { id: '3', userId: 'USER234', date: '2024-03-13', status: 'Inactive', earnings: 25 },
-];
+// type Referral = {
+//   id: string;
+//   userId: string;
+//   date: string;
+//   status: string;
+//   earnings: number;
+// };
 
 export function ReferralsList() {
      const { address } = useAccount()

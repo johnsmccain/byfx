@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom"
 import { useAccount } from "wagmi";
-import { useWriteContract } from "wagmi";
-import { byForexConfig } from "../../abi";
+// import { useWriteContract } from "wagmi";
+// import { byForexConfig } from "../../abi";
 
 const Earning = () => {
   const navigate = useNavigate();
 
   const { isConnected, address } = useAccount();
-  const { writeContract, error } = useWriteContract()
+  // const { writeContract, error } = useWriteContract()
 
   useEffect(() => {
     if (!isConnected) {
@@ -21,21 +21,8 @@ const Earning = () => {
     return `${address.slice(0, 4)}****${address.slice(-4)}`;
   };
 
-  const handleWithdraw = () => {
-    writeContract({
-      abi: byForexConfig.abi,
-      address: byForexConfig.address as `0x${string}`,
-      functionName: 'withdraw',
-      args: [BigInt(1)],
-    });
-  };
 
-  useEffect(() => {
-    if (error) {
-      console.log('Transaction error:', error);
-    }
-    console.log("Address", address);
-  }, [error]);
+
 
   return (
     <div className="px-3 md:px-28 py-20 flex flex-col ">
@@ -73,7 +60,7 @@ const Earning = () => {
             <p className="text-primary font-semibold">10</p>
           </div>
         </div>
-        <button className="w-full py-2 rounded-lg bg-primary text-white font-semibold text-lg" onClick={handleWithdraw}>Withdraw</button>
+        <button className="w-full py-2 rounded-lg bg-primary text-white font-semibold text-lg" >Withdraw</button>
       </div>
 
     </div>

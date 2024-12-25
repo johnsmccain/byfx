@@ -1,5 +1,5 @@
-import { useAccount } from "wagmi"
-import { byForexConfig } from "../../abi"
+import { useAccount,  useWatchContractEvent } from "wagmi"
+import { byForexConfig, tokenConfig } from "../../abi"
 import {
   useGetDividendIncome,
   // useDistributeDividend,
@@ -26,6 +26,7 @@ const Dashboard = () => {
   
   const [referralCode, setReferralCode] = useState(1000);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isTxApproved, setIsTxApproved] = useState(false);
   
   const { address } = useAccount()
   
@@ -40,7 +41,7 @@ const Dashboard = () => {
   // const parsedFinancialData = parseFinancialData([getDividendPool][0] || [])
   const [packageId, setPackageId] = useState<number>((Number(parsedUserInfo.level)));
   const [investmentAmount, setInvestmentAmount] = useState<string>(packages[packageId]);
-  const { approve,isPending:isApprovePending, } = useApprove(byForexConfig.address,  parseEther(investmentAmount));
+  const { approve,isPending:isApprovePending,} = useApprove(byForexConfig.address,  parseEther(investmentAmount));
   const { register, isPending:isRegisterPending, isSuccess:isRegisterSuccess, isError:isRegisterError } = useRegister(BigInt(referralCode), address as `0x${string}`, parseEther(investmentAmount));
   const {data:getDividendTime} = useGetDividendTime()
   const {data:getDividendIncome} = useGetDividendIncome(parsedUserInfo.id);
@@ -56,7 +57,7 @@ console.log(convertTimestampToDate(Number(getDividendTime)))
   // const fullURL = `${window.location.origin}${location.search}`;
   const getfullURL = `${window.location.origin}?referral=${parsedUserInfo.id}`;
 
-  const isApprove =() => Number(isApproved) < Number(parseEther(investmentAmount))
+  
   // alert(Number(isApproved) < Number(parseEther(investmentAmount)))
 /**
  * Handles the investment process by determining the user's level and either
@@ -78,7 +79,14 @@ console.log(convertTimestampToDate(Number(getDividendTime)))
 
     // alert(balance)
   }
-
+  useWatchContractEvent({
+    address: tokenConfig.address as `0x${string}`,
+    abi: tokenConfig.abi,
+    eventName: 'Approval',
+    onLogs(logs) {
+      console.log('New logs!', logs)
+    },
+  })
 
   /**
    * Approves the ERC20 contract to spend the user's investment amount
@@ -95,6 +103,8 @@ console.log(convertTimestampToDate(Number(getDividendTime)))
 
 
   const storedCode = localStorage.getItem('referralCode')
+
+
   useEffect(() => {
     if(storedCode){
       setReferralCode(JSON.parse(storedCode))
@@ -114,10 +124,17 @@ useEffect(() => {
   setInvestmentAmount(packages[Number(parsedUserInfo.level)])
   
 },[parsedUserInfo.level])
+
+
 // console.log(packageId)
 useEffect(() => {
-  
-})
+  setIsTxApproved(Number(isApproved) < Number(parseEther(investmentAmount)))
+}, [Number(isApproved),parseEther(investmentAmount)])
+
+// const result = useTransaction({
+//   blockHash: upgradeTxHash, 
+//   index: 0,
+// })
 
   return (
     <div className="">
@@ -166,13 +183,13 @@ useEffect(() => {
               <p className="text-primary">${formatEther(parsedUserInfo.totalDeposit)}</p>
             </div>
             <button
-              onClick={isApprove() ? handleApprove : handleInvest}
+              onClick={isTxApproved ? handleApprove : handleInvest}
               // disabled={  Number(parseEther(investmentAmount)) === 0}
               className={`w-full py-2 rounded-lg text-lg font-semibold bg-primary ${isApprovePending || isRegisterPending || isUpgradePending?"outline-none opacity-50 cursor-not-allowed":"  text-white cursor-pointer"}`}
             >
               {isApprovePending || isRegisterPending || isUpgradePending
                 ? 'Confirming...'
-                : isApprove()
+                : isTxApproved
                   ? `Approve ${investmentAmount} USDT`
                   : `Invest ${investmentAmount} USDT`}
 

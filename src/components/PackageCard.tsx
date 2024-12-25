@@ -19,15 +19,6 @@ const PackageCard = ({ packageMode }: { packageMode: Package }) => {
       hash,
     })
 
-  const handleInvest = () => {
-    writeContract({
-      abi: byForexConfig.abi,
-      address: byForexConfig.address as `0x${string}`,
-      functionName: 'invest',
-      args: [BigInt(packageMode.level), BigInt(packageMode.amount * 1e18)],
-    });
-  };
-
   const handleApprove = () => {
     writeContract({
       address: '0x93323bB3896C5eff97320BC63E4FbccB41D0C8C4', // USDT Contract Address
@@ -77,7 +68,7 @@ const PackageCard = ({ packageMode }: { packageMode: Package }) => {
       </div>
       <div className="mt-5">
         <button
-          onClick={!isApproved ? handleApprove : handleInvest}
+          onClick={!isApproved ? handleApprove : ()=>{}}
           disabled={isConfirming}
           className={`w-full py-2 rounded-full bg-transparent text-primary transition-colors border-2 shadow-primary font-bold border-primary duration-300 hover:bg-primary hover:text-white ${isConfirming ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
