@@ -13,7 +13,7 @@ export function useAllowance(owner: `0x${string}`|undefined, spender: `0x${strin
 
 // Hook for `approve`
 export function useApprove(spender: string, value: bigint) {
-    const { writeContract, isSuccess, isPending, isError, data,status } = useWriteContract();
+    const { writeContract, isSuccess, isPending, isError, data } = useWriteContract();
     const approve = () => {
        writeContract({
             address: tokenConfig.address as `0x${string}`,
@@ -22,7 +22,7 @@ export function useApprove(spender: string, value: bigint) {
             args: [spender, value],
         });
     }
-    return {approve, isSuccess, isPending, isError, data, status};
+    return {approve, isSuccess, isPending, isError, data};
 }
 
 // Hook for `balanceOf`

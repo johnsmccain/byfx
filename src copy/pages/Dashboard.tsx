@@ -11,54 +11,83 @@ import {
   useUserId,
   useUserInfo
 } from "../hooks/useContract";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAllowance, useApprove } from "../hooks/useERC20Contract";
 import { formatEther, parseEther } from "viem";
 import {  parseIncomeData, parseUserInfo } from "../utils/helper";
 import toast from "react-hot-toast";
 import { convertTimestampToDate } from "../utils";
 import Navbar from "../components/Navbar";
+// import formatAmount from "../utils";
 const packages = ["20", "40", "80", "160", "320", "640", "1280", "2560", "5120", "10240", "20480", "40960"]
 const Dashboard = () => {
-
-  const [referralCode, setReferralCode] = useState(1000);  
+  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const [referralCode, setReferralCode] = useState(1000);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isTxApproved, setIsTxApproved] = useState(false);
+  
   const { address } = useAccount()
+  
   const { upgrade: upgradeLevel,isPending:isUpgradePending, isSuccess:isUpgradeSuccess, isError:isUpgradeError, data: upgradeTxHash} = useUpgrade();
-
+  // const {distributeDividend} = useDistributeDividend()
+  // const [value, setValue] = useState<bigint>(BigInt(0));
   const { data: isApproved } = useAllowance(address, byForexConfig.address as `0x${string}`);
   const {data:userId} = useUserId(address as `0x${string}`)
   const {data:userInfo} = useUserInfo(userId as bigint)
   const parsedUserInfo = parseUserInfo([userInfo][0] || [])
-
+  // const {data:getDividendPool} = useGetDividendPool()
+  // const parsedFinancialData = parseFinancialData([getDividendPool][0] || [])
   const [packageId, setPackageId] = useState<number>((Number(parsedUserInfo.level)));
   const [investmentAmount, setInvestmentAmount] = useState<string>(packages[packageId]);
-  const { approve,isPending:isApprovePending,data: approveTxHash,  isError:isApproveError} = useApprove(byForexConfig.address,  parseEther(investmentAmount));
-  const { register, isPending:isRegisterPending, isSuccess:isRegisterSuccess, isError:isRegisterError} = useRegister(BigInt(referralCode), address as `0x${string}`, parseEther(investmentAmount));
+  const { approve,isPending:isApprovePending,data: approveTxHash, isSuccess:isApproveSuccess, isError:isApproveError} = useApprove(byForexConfig.address,  parseEther(investmentAmount));
+  const { register, isPending:isRegisterPending, isSuccess:isRegisterSuccess, isError:isRegisterError } = useRegister(BigInt(referralCode), address as `0x${string}`, parseEther(investmentAmount));
   const {data:getDividendTime} = useGetDividendTime()
   const {data:getDividendIncome} = useGetDividendIncome(parsedUserInfo.id);
   const parsedUserIncome = parseIncomeData([getDividendIncome][0] || [])
 
 
+    const [isLoading, setIsLoading,] = useState(false)
   
 
 console.log(convertTimestampToDate(Number(getDividendTime)))
 
   // Get the full URL
+  // const fullURL = `${window.location.origin}${location.search}`;
   const getfullURL = `${window.location.origin}?referral=${parsedUserInfo.id}`;
 
   
-
+  // alert(Number(isApproved) < Number(parseEther(investmentAmount)))
+/**
+ * Handles the investment process by determining the user's level and either
+ * upgrading their level or registering them. If the user's level is greater
+ * than or equal to 1, it attempts to upgrade their level with the current 
+ * investment amount. Otherwise, it registers the user. Logs the packageId as 
+ * a BigInt for debugging purposes.
+ */
 
 const handleRegister = async ()=>{
   await register()
-  setIsAllowed(false)
+
+  // alert(balance)
 }
   const handleInvest = async () => {
+    //og(parseUserInfo([userInfo[0]]))
+    // Number(parseUserInfo([userInfo][0]).level) >= 1? await register(): 
     Number(parsedUserInfo.level) >= 1? await upgradeLevel(BigInt(userId as bigint), BigInt("1"), parseEther(investmentAmount)) : handleRegister() 
-    setIsAllowed(false)
+
   };
 
-
+  useWatchContractEvent({
+    address: tokenConfig.address as `0x${string}`,
+    abi: tokenConfig.abi,
+    eventName: 'Approval',
+    onLogs(logs) {
+      setIsLoading(true)
+      console.log('New logs!', logs)
+    },
+  })
 
   /**
    * Approves the ERC20 contract to spend the user's investment amount
@@ -91,66 +120,22 @@ const handleRegister = async ()=>{
       toast.success("Registration successful")
     } 
   },[isUpgradeSuccess, isRegisterSuccess, isUpgradePending, isRegisterPending, isRegisterError, isUpgradeError])
+useEffect(() => {
+  // setPackageId(Number(parsedUserInfo.level))
+  setInvestmentAmount(packages[Number(parsedUserInfo.level)])
   
-  
-  
-  
-const {
-  // status:transactionstatus, 
-  isFetched: transactionisFetched, 
-  // data:transactiondata, isPending:transactionisPending, isSuccess:transactionisSuccess, promise:transactionpromise
-} = useTransaction({
+},[parsedUserInfo.level])
+
+
+// console.log(packageId)
+useEffect(() => {
+  setIsTxApproved(Number(isApproved) < Number(parseEther(investmentAmount)))
+}, [Number(isApproved),parseEther(investmentAmount)])
+
+const {status, isFetched, data, isPending, isSuccess, promise} = useTransaction({
   blockHash: upgradeTxHash, 
   index: 0,
 })
-const { isFetched: approveTransactionisFetched} = useTransaction({
-  blockHash: approveTxHash, 
-  index: 0,
-})
-const [isAllowed, setIsAllowed] = useState(Number(isApproved) >=Number(parseEther(investmentAmount)))
-const [currentLevel, setCurrentLevel,] = useState(Number(parsedUserInfo.level))
-
-useWatchContractEvent({
-  address: tokenConfig.address as `0x${string}`,
-  abi: tokenConfig.abi,
-  eventName: 'Approval',
-  onLogs() {
-    setIsAllowed(true)
-  },
-})
-  // console.log(packageId)
-useEffect(() => {
-  setIsAllowed(Number(isApproved) >=Number(parseEther(investmentAmount)))
-}, [isApproved,investmentAmount,isAllowed, approveTransactionisFetched])
-
-useEffect(() => {
-  // setPackageId(Number(parsedUserInfo.level))
-  setIsAllowed(Number(isApproved) >=Number(parseEther(investmentAmount)))
-  setInvestmentAmount(packages[Number(parsedUserInfo.level)])
-  setCurrentLevel(Number(parsedUserInfo.level))
-  
-},[parsedUserInfo.level, transactionisFetched, isAllowed])
-
-useEffect(() => {
-  if(isRegisterError){
-    toast.error("Try Again")
-  }
-  if(isApproveError){
-    toast.error("Check Your Wallet balance and Try Again")
-  }
-},[isRegisterError, isApproveError])
-
-useEffect(() => {
-  if(Number(parsedUserInfo.level) > currentLevel){
-    setInvestmentAmount(packages[Number(parsedUserInfo.level)])
-    setCurrentLevel(Number(parsedUserInfo.level))
-  }else{
-    
-  }
-},[transactionisFetched])
-useEffect(() => {
-  setIsAllowed(Number(isApproved) >=Number(parseEther(investmentAmount)))
-},[approveTransactionisFetched])
 
   return (
     <div className="">
@@ -184,7 +169,7 @@ useEffect(() => {
                   // onClick={() => { }}
                   disabled={(Number(parsedUserInfo.level)) !== (index )}
                   className={`py-2 px-4 rounded-md text-white font-semibold ${
-                    currentLevel === (index ) ? 'bg-primary cursor-pointer' : 'bg-gray-400 cursor-not-allowed'
+                    Number(parsedUserInfo.level) === (index ) ? 'bg-primary cursor-pointer' : 'bg-gray-400 cursor-not-allowed'
                   }`}
                   // className={`text-black font-semibold p-4 cursor-pointer bg-neutral-400`}
                 >
@@ -199,22 +184,29 @@ useEffect(() => {
               <p className="text-primary">${formatEther(parsedUserInfo.totalDeposit)}</p>
             </div>
             <button
-              onClick={isAllowed ? handleInvest: handleApprove}
+              onClick={isTxApproved ? handleApprove : handleInvest}
               // disabled={  Number(parseEther(investmentAmount)) === 0}
-              className={`w-full py-2 rounded-lg text-lg font-semibold bg-primary ${isApprovePending || isRegisterPending || isUpgradePending?"outline-none opacity-50 cursor-not-allowed": isUpgradeError || isRegisterError? "outline-none cursor-not-allowed bg-red-500 text-white": "text-white cursor-pointer"}`}
+              className={`w-full py-2 rounded-lg text-lg font-semibold bg-primary ${isApprovePending || isRegisterPending || isUpgradePending?"outline-none opacity-50 cursor-not-allowed":"  text-white cursor-pointer"}`}
             >
               {isApprovePending || isRegisterPending || isUpgradePending
-                ? 'Processing...'
-                : isAllowed
-                  ? `Invest ${investmentAmount} USDT`
-                   : `Approve ${investmentAmount} USDT`}
+                ? 'Confirming...'
+                : isTxApproved
+                  ? `Approve ${investmentAmount} USDT`
+                  : `Invest ${investmentAmount} USDT`}
+
+              {/* Approve */}
 
             </button>
-
-                
+            
+            <p>Contract{`status:${status}, isFetched:${isFetched}, data:${data}, isPending:${isPending}, isSuccess:${isSuccess}, promise:${promise}`}</p>
+            
+            <p>Token{`status:${status}, isFetched:${isFetched}, data:${data?.value}, isPending:${isPending}, isSuccess:${isSuccess}, promise:${promise}`}</p>
+                <p>{isLoading?"done":"loading"}</p>
           </div>
         </div>
-        
+        {/* <button className="bg-green-700 cursor-pointer w-full py-2 rounded-lg text-lg font-semibold text-white outline-none" onClick={distributeDividend}>distributeDividend</button> */}
+        {/* transferOwnership */}
+        {/* <button className="bg-green-700 cursor-pointer w-full py-2 rounded-lg text-lg font-semibold text-white outline-none" onClick={transferOwnership}>transferOwnership</button> */}
         <div>
           <div className="flex items-center justify-between">
           <p className="text-2xl py-4 md:text-4xl text-white font-bold">Pool Claim</p>
@@ -282,6 +274,47 @@ useEffect(() => {
       </div>
     </div>
       </div>
+
+         {/* Modal */}
+         {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white w-11/12 max-w-md p-6 rounded-lg shadow-lg">
+            <h2 className="text-2xl font-bold text-center mb-4">Enter Referral Code</h2>
+            <p className="text-gray-600 text-sm mb-4 text-center">
+              Please enter your referral code. Use <strong>"1000"</strong> if you don’t have one.
+            </p>
+            <input
+              type="number"
+              value={referralCode}
+              onChange={(e:React.ChangeEvent<HTMLInputElement>) => setReferralCode(Number(e.target.value) )}
+              placeholder="Enter your referral code"
+              className="w-full h-12 border-2 border-black rounded-lg px-3 text-center font-semibold mb-2"
+              required
+            />
+            {errorMessage && (
+              <p className="text-red-500 text-sm mb-4">{errorMessage}</p>
+            )}
+            <div className="flex justify-end gap-4">
+              <button
+
+                onClick={handleRegister}
+                className="bg-primary text-white py-2 px-4 rounded-md font-semibold"
+              >
+                Register
+              </button>
+              <button
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setErrorMessage('');
+                }}
+                className="bg-gray-300 py-2 px-4 rounded-md font-semibold"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
     </div>
