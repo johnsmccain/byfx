@@ -176,16 +176,31 @@ useEffect(() => {
 }, [parsedUserInfo.level, currentLevel, investmentAmount]);
 
 useEffect(() => {
-  const timeoutId = setTimeout(() => {
+  if(transactionWaitForTransactionReceipt){
+    const timeoutId = setTimeout(() => {
     setInvestmentAmount(packages[Number(parsedUserInfo.level)]);
     setCurrentLevel(Number(parsedUserInfo.level));
-    toast.success("Action successful after timeout!");
-  }, 500); // Wait for 0.5 seconds
-
+    toast.success("successful after");
+  }, 7000); // Wait for 0.5 seconds
   // Cleanup the timeout to prevent memory leaks
   return () => clearTimeout(timeoutId);
+  }
 
-}, [])
+
+}, [transactionWaitForTransactionReceipt])
+// useEffect(() => {
+//   if(approveTransactionisFetched){    
+//     const timeoutId = setTimeout(() => {
+//       setInvestmentAmount(packages[Number(parsedUserInfo.level)]);
+//       setCurrentLevel(Number(parsedUserInfo.level));
+//       toast.success("approveTransactionisFetchedful after timeout!");
+//     }, 7000); // Wait for 0.5 seconds
+//     // Cleanup the timeout to prevent memory leaks
+//     return () => clearTimeout(timeoutId);
+//   }
+
+
+// }, [approveTransactionisFetched])
   return (
     <div className="">
     <div className="px-3 md:px-28 py-20 flex flex-col  pt-20">
