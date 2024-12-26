@@ -1,17 +1,22 @@
-import { RouterProvider } from 'react-router-dom'
-import './App.css'
-import { route } from './utils/routes'
-
+import { Route, Routes } from 'react-router-dom'
+import Home from './pages/Home'
+import Dashboard from './pages/Dashboard'
+import { ReferralsList } from './pages/ReferralsList'
+import { InvestmentsList } from './pages/InvestmentsList'
 import { Toaster } from 'react-hot-toast'
 
 function App() {
 
-
   return (
     <>
-     
-      <RouterProvider router={route} />
+      <Routes>
+        <Route path="/" element={<Home/>} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/referals" element={<ReferralsList />} />
+        <Route path="/activities" element={<InvestmentsList />} />
+      </Routes>
       <Toaster />
+
     </>
   )
 }

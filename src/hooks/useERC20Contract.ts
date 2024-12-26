@@ -1,5 +1,5 @@
 import { useReadContract, useSimulateContract, useWriteContract } from 'wagmi';
-import { tokenConfig } from '../../abi';
+import { tokenConfig } from '../abi';
 
 // Hook for `allowance`
 export function useAllowance(owner: `0x${string}`|undefined, spender: `0x${string}`|undefined) {

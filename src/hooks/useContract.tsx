@@ -1,7 +1,8 @@
 // src/hooks/useContract.ts
 import { useReadContract,    useWriteContract } from 'wagmi';
-import { byForexConfig } from '../../abi';
+
 import { useState } from 'react';
+import { byForexConfig } from '../abi';
 
 
 // Hook for 'activity' function

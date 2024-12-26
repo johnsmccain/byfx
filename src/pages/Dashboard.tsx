@@ -1,5 +1,4 @@
-import { useAccount,  useTransaction,  useWatchContractEvent } from "wagmi"
-import { byForexConfig, tokenConfig } from "../../abi"
+import { useAccount, useTransactionConfirmations,  useWaitForTransactionReceipt,  useWatchContractEvent } from "wagmi"
 import {
   useGetDividendIncome,
   // useDistributeDividend,
@@ -18,6 +17,7 @@ import {  parseIncomeData, parseUserInfo } from "../utils/helper";
 import toast from "react-hot-toast";
 import { convertTimestampToDate } from "../utils";
 import Navbar from "../components/Navbar";
+import { byForexConfig, tokenConfig } from "../abi";
 const packages = ["20", "40", "80", "160", "320", "640", "1280", "2560", "5120", "10240", "20480", "40960"]
 const Dashboard = () => {
 
@@ -41,7 +41,7 @@ const Dashboard = () => {
 
   
 
-console.log(convertTimestampToDate(Number(getDividendTime)))
+// console.log(convertTimestampToDate(Number(getDividendTime)))
 
   // Get the full URL
   const getfullURL = `${window.location.origin}?referral=${parsedUserInfo.id}`;
@@ -99,15 +99,26 @@ const {
   // status:transactionstatus, 
   isFetched: transactionisFetched, 
   // data:transactiondata, isPending:transactionisPending, isSuccess:transactionisSuccess, promise:transactionpromise
-} = useTransaction({
-  blockHash: upgradeTxHash, 
-  index: 0,
+} = useTransactionConfirmations({
+  hash: upgradeTxHash, 
 })
-const { isFetched: approveTransactionisFetched} = useTransaction({
-  blockHash: approveTxHash, 
-  index: 0,
+const { isFetched: approveTransactionisFetched} = useTransactionConfirmations({
+  hash: approveTxHash, 
 })
-const [isAllowed, setIsAllowed] = useState(Number(isApproved) >=Number(parseEther(investmentAmount)))
+console.log(`approveTransactionConfirmations ${approveTransactionisFetched} transactionTransactionConfirmations ${transactionisFetched}`)
+const {
+  // status:transactionstatus, 
+  isFetched: transactionWaitForTransactionReceipt, 
+  // data:transactiondata, isPending:transactionisPending, isSuccess:transactionisSuccess, promise:transactionpromise
+} = useWaitForTransactionReceipt({
+  hash: upgradeTxHash, 
+})
+const { isFetched: approveWaitForTransactionReceipt} = useWaitForTransactionReceipt({
+  hash: approveTxHash, 
+})
+console.log(`approveWaitForTransactionReceipt ${approveWaitForTransactionReceipt} transactionWaitForTransactionReceipt ${transactionWaitForTransactionReceipt}`)
+const [isAllowed, setIsAllowed] = useState(Number(isApproved) <=Number(parseEther(investmentAmount)));
+// const [isAllowed, setIsAllowed] = useState(false);
 const [currentLevel, setCurrentLevel,] = useState(Number(parsedUserInfo.level))
 
 useWatchContractEvent({
@@ -116,20 +127,23 @@ useWatchContractEvent({
   eventName: 'Approval',
   onLogs() {
     setIsAllowed(true)
+    handleInvest()
   },
 })
   // console.log(packageId)
-useEffect(() => {
-  setIsAllowed(Number(isApproved) >=Number(parseEther(investmentAmount)))
-}, [isApproved,investmentAmount,isAllowed, approveTransactionisFetched])
-
-useEffect(() => {
-  // setPackageId(Number(parsedUserInfo.level))
-  setIsAllowed(Number(isApproved) >=Number(parseEther(investmentAmount)))
-  setInvestmentAmount(packages[Number(parsedUserInfo.level)])
-  setCurrentLevel(Number(parsedUserInfo.level))
+  // console.log(isAllowed)
+  useEffect(() => {
+    setIsAllowed(Number(isApproved) >= Number(parseEther(investmentAmount)));
+  }, [isApproved, investmentAmount]);
   
-},[parsedUserInfo.level, transactionisFetched, isAllowed])
+
+  useEffect(() => {
+    const level = Number(parsedUserInfo.level);
+    setPackageId(level);
+    setInvestmentAmount(packages[level]);
+    setIsAllowed(Number(isApproved) >= Number(parseEther(packages[level])));
+  }, [parsedUserInfo.level, isApproved]);
+  
 
 useEffect(() => {
   if(isRegisterError){
@@ -141,17 +155,38 @@ useEffect(() => {
 },[isRegisterError, isApproveError])
 
 useEffect(() => {
-  if(Number(parsedUserInfo.level) > currentLevel){
-    setInvestmentAmount(packages[Number(parsedUserInfo.level)])
-    setCurrentLevel(Number(parsedUserInfo.level))
-  }else{
-    
+  if (parsedUserInfo.level > currentLevel) {
+    setInvestmentAmount(packages[Number(parsedUserInfo.level)]);
+    setCurrentLevel(Number(parsedUserInfo.level));
   }
-},[transactionisFetched])
+}, [parsedUserInfo.level, currentLevel]);
+
 useEffect(() => {
   setIsAllowed(Number(isApproved) >=Number(parseEther(investmentAmount)))
 },[approveTransactionisFetched])
 
+useEffect(() => {
+  setPackageId(Number(parsedUserInfo.level));
+  setInvestmentAmount(packages[Number(parsedUserInfo.level)]);
+}, [parsedUserInfo.level]);
+
+useEffect(() => {
+  console.log('parsedUserInfo.level:', parsedUserInfo.level);
+  console.log('currentLevel:', currentLevel);
+  console.log('investmentAmount:', investmentAmount);
+}, [parsedUserInfo.level, currentLevel, investmentAmount]);
+
+useEffect(() => {
+  const timeoutId = setTimeout(() => {
+    setInvestmentAmount(packages[Number(parsedUserInfo.level)]);
+    setCurrentLevel(Number(parsedUserInfo.level));
+    toast.success("Action successful after timeout!");
+  }, 500); // Wait for 0.5 seconds
+
+  // Cleanup the timeout to prevent memory leaks
+  return () => clearTimeout(timeoutId);
+
+}, [])
   return (
     <div className="">
       <Navbar/>
@@ -199,9 +234,9 @@ useEffect(() => {
               <p className="text-primary">${formatEther(parsedUserInfo.totalDeposit)}</p>
             </div>
             <button
-              onClick={isAllowed ? handleInvest: handleApprove}
-              // disabled={  Number(parseEther(investmentAmount)) === 0}
-              className={`w-full py-2 rounded-lg text-lg font-semibold bg-primary ${isApprovePending || isRegisterPending || isUpgradePending?"outline-none opacity-50 cursor-not-allowed": isUpgradeError || isRegisterError? "outline-none cursor-not-allowed bg-red-500 text-white": "text-white cursor-pointer"}`}
+              onClick={handleApprove}
+              disabled={  Number(parseEther(investmentAmount)) === 0 || isApprovePending || isRegisterPending || isUpgradePending}
+              className={`w-full py-2 rounded-lg text-lg font-semibold bg-primary ${Number(parseEther(investmentAmount)) === 0 || isApprovePending || isRegisterPending || isUpgradePending?"outline-none opacity-50 cursor-not-allowed": isUpgradeError || isRegisterError? "outline-none cursor-not-allowed bg-red-500 text-white": "text-white cursor-pointer"}`}
             >
               {isApprovePending || isRegisterPending || isUpgradePending
                 ? 'Processing...'
