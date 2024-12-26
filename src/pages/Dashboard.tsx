@@ -50,11 +50,11 @@ const Dashboard = () => {
 
 const handleRegister = async ()=>{
   await register()
-  setIsAllowed(false)
+  // setIsAllowed(false)
 }
   const handleInvest = async () => {
     Number(parsedUserInfo.level) >= 1? await upgradeLevel(BigInt(userId as bigint), BigInt("1"), parseEther(investmentAmount)) : handleRegister() 
-    setIsAllowed(false)
+    // setIsAllowed(false)
   };
 
 
@@ -116,7 +116,7 @@ const { isFetched: approveWaitForTransactionReceipt} = useWaitForTransactionRece
   hash: approveTxHash, 
 })
 console.log(`approveWaitForTransactionReceipt ${approveWaitForTransactionReceipt} transactionWaitForTransactionReceipt ${transactionWaitForTransactionReceipt}`)
-const [isAllowed, setIsAllowed] = useState(Number(isApproved) <=Number(parseEther(investmentAmount)));
+// const [isAllowed, setIsAllowed] = useState(Number(isApproved) <=Number(parseEther(investmentAmount)));
 // const [isAllowed, setIsAllowed] = useState(false);
 const [currentLevel, setCurrentLevel,] = useState(Number(parsedUserInfo.level))
 
@@ -125,22 +125,22 @@ useWatchContractEvent({
   abi: tokenConfig.abi,
   eventName: 'Approval',
   onLogs() {
-    setIsAllowed(true)
+    // setIsAllowed(true)
     handleInvest()
   },
 })
   // console.log(packageId)
   // console.log(isAllowed)
-  useEffect(() => {
-    setIsAllowed(Number(isApproved) >= Number(parseEther(investmentAmount)));
-  }, [isApproved, investmentAmount]);
+  // useEffect(() => {
+  //   setIsAllowed(Number(isApproved) >= Number(parseEther(investmentAmount)));
+  // }, [isApproved, investmentAmount]);
   
 
   useEffect(() => {
     const level = Number(parsedUserInfo.level);
     setPackageId(level);
     setInvestmentAmount(packages[level]);
-    setIsAllowed(Number(isApproved) >= Number(parseEther(packages[level])));
+    // setIsAllowed(Number(isApproved) >= Number(parseEther(packages[level])));
   }, [parsedUserInfo.level, isApproved]);
   
 
@@ -160,20 +160,16 @@ useEffect(() => {
   }
 }, [parsedUserInfo.level, currentLevel]);
 
-useEffect(() => {
-  setIsAllowed(Number(isApproved) >=Number(parseEther(investmentAmount)))
-},[approveTransactionisFetched])
+// useEffect(() => {
+//   setIsAllowed(Number(isApproved) >=Number(parseEther(investmentAmount)))
+// },[approveTransactionisFetched])
 
 useEffect(() => {
   setPackageId(Number(parsedUserInfo.level));
   setInvestmentAmount(packages[Number(parsedUserInfo.level)]);
 }, [parsedUserInfo.level]);
 
-useEffect(() => {
-  console.log('parsedUserInfo.level:', parsedUserInfo.level);
-  console.log('currentLevel:', currentLevel);
-  console.log('investmentAmount:', investmentAmount);
-}, [parsedUserInfo.level, currentLevel, investmentAmount]);
+
 
 useEffect(() => {
   if(transactionWaitForTransactionReceipt){
