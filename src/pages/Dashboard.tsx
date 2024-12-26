@@ -253,9 +253,7 @@ useEffect(() => {
             >
               {isApprovePending || isRegisterPending || isUpgradePending
                 ? 'Processing...'
-                : isAllowed
-                  ? `Invest ${investmentAmount} USDT`
-                   : `Approve ${investmentAmount} USDT`}
+                : `Approve ${investmentAmount} USDT`}
 
             </button>
 
