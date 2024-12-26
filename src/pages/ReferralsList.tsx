@@ -6,6 +6,7 @@ import { useAccount } from 'wagmi';
 import { useActivity,  useUserId, useUserInfo } from '../hooks/useContract';
 import { parseUserInfo } from '../utils/helper';
 import { convertTimestampToDate } from '../utils';
+import { formatEther } from 'viem';
 
 // type Referral = {
 //   id: string;
@@ -29,17 +30,14 @@ export function ReferralsList() {
           <Users className="w-8 h-8 text-blue-600" />
           <h1 className="text-2xl font-bold text-white">Recent Activities</h1>
         </div>
-        <DataTable headers={['User ID', 'Level', "Income Received", "Time"]}>
+        <DataTable headers={['User ID', "Income Received", "Time"]}>
           {getRecentActivities?.map((referral) => (
             <tr key={Number(referral.id)}>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 {Number(referral.id)}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {Number(referral.layer)}
-              </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {Number(referral.amount)}
+                {formatEther(referral.amount)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 {convertTimestampToDate(Number(referral.time))}

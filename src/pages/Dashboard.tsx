@@ -220,7 +220,7 @@ const Dashboard = () => {
                     onClick={() => { setInvestmentAmount(item); setPackageId(index + 1); }}
                     // onClick={() => { }}
                     disabled={(Number(parsedUserInfo.level)) !== (index)}
-                    className={`py-2 px-4 rounded-md text-white font-semibold ${currentLevel === (index) ? 'bg-primary cursor-pointer' : 'bg-gray-400 cursor-not-allowed'
+                    className={`py-2 px-4 rounded-md text-white font-semibold ${currentLevel === (index) ? 'bg-primary cursor-pointer' : currentLevel > (index) ? 'bg-yellow-400 cursor-not-allowed bg-opacity-50' : 'bg-gray-400 cursor-not-allowed'
                       }`}
                   // className={`text-black font-semibold p-4 cursor-pointer bg-neutral-400`}
                   >
