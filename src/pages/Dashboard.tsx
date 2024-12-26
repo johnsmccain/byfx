@@ -217,7 +217,7 @@ useEffect(() => {
 
       <div className="flex gap-5 z-20 flex-col">
         <div>
-          <p className="text-2xl py-4 md:text-4xl text-white font-bold">Purchase Slot</p>
+          <p className="text-2xl py-4 text-white font-bold">Purchase Slot</p>
           <div className="bg-white w-full rounded-lg py-5 px-3 flex flex-col gap-5">
             <div className="w-full gap-2 justify-evenly flex flex-wrap">
 
@@ -259,8 +259,8 @@ useEffect(() => {
         
         <div>
           <div className="flex items-center justify-between">
-          <p className="text-2xl py-4 md:text-4xl text-white font-bold">Pool Claim</p>
-          <p className="text-2xl py-4 md:text-4xl text-white font-bold">Pool Closes At {convertTimestampToDate(Number(getDividendTime))}</p>
+          <p className="text-2xl py-4 text-white font-bold">Pool Claim</p>
+          {/* <p className="text-2xl py-4 md:text-4xl text-white font-bold">Pool Closes At {convertTimestampToDate(Number(getDividendTime))}</p> */}
           </div>
           <div className="bg-white w-full rounded-lg py-5 px-3">
             <div className="flex flex-col gap-3">
@@ -284,7 +284,7 @@ useEffect(() => {
         </div>
 
         <div>
-          <p className="text-2xl py-4 md:text-4xl text-white font-bold">Income claim</p>
+          <p className="text-2xl py-4  text-white font-bold">Income claim</p>
           <div className="flex flex-col gap-3">
             <div className=" bg-white w-full rounded-lg py-5 px-3 flex flex-col gap-5 ">
               <div className="flex justify-between">
@@ -303,7 +303,7 @@ useEffect(() => {
         </div>
 
         <div>
-      <p className="text-2xl py-4 md:text-4xl text-white font-bold">Referral link</p>
+      <p className="text-2xl py-4  text-white font-bold">Referral link</p>
       <div className="bg-white w-full rounded-lg py-5 px-3 flex flex-col md:flex-row gap-5">
         <div className="w-full">
           <input

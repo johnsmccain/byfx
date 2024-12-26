@@ -27,7 +27,7 @@ export function ReferralsList() {
         <Users className="w-8 h-8 text-blue-600" />
         <h1 className="text-2xl font-bold text-white">My Referrals</h1>
       </div>
-      <DataTable headers={['User Addr', 'User ID', 'Referrer', 'Level', 'TotalIncome', "referralIncome"]}>
+      <DataTable headers={['User Addr', 'Referrer', 'Level', "referralIncome"]}>
         {getDirectTeamUsers?.map((referral) => (
           <tr key={Number(referral.id)}>
             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
