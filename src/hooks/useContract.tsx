@@ -10,7 +10,7 @@ export function useActivity(id: bigint) {
     return useReadContract({
         address: byForexConfig.address as `0x${string}`,
         abi: byForexConfig.abi,
-        functionName: 'getRecentActivities',
+        functionName: 'getIncome',
         args: [id],
     });
 }
