@@ -2,7 +2,6 @@
 // import { DataTable } from '../components/DataTable';
 import { Users } from 'lucide-react';
 import { DataTable } from '../components/DataTable';
-import Navbar from '../components/Navbar';
 import { useAccount } from 'wagmi';
 import { useGetDirectTeamUsers, useUserId, useUserInfo } from '../hooks/useContract';
 import { parseUserInfo } from '../utils/helper';
@@ -23,7 +22,6 @@ export function ReferralsList() {
         const {data:getDirectTeamUsers} = useGetDirectTeamUsers(parsedUserInfo.id)
   return (
     <div className="">
-        <Navbar/>
     <div className="space-y-6 mt-20 container mx-auto">
       <div className="flex items-center space-x-3">
         <Users className="w-8 h-8 text-blue-600" />

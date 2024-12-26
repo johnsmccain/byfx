@@ -16,7 +16,6 @@ import { formatEther, parseEther } from "viem";
 import {  parseIncomeData, parseUserInfo } from "../utils/helper";
 import toast from "react-hot-toast";
 import { convertTimestampToDate } from "../utils";
-import Navbar from "../components/Navbar";
 import { byForexConfig, tokenConfig } from "../abi";
 const packages = ["20", "40", "80", "160", "320", "640", "1280", "2560", "5120", "10240", "20480", "40960"]
 const Dashboard = () => {
@@ -189,7 +188,6 @@ useEffect(() => {
 }, [])
   return (
     <div className="">
-      <Navbar/>
     <div className="px-3 md:px-28 py-20 flex flex-col  pt-20">
       <div className="h-screen w-full fixed top-0 left-0 flex justify-center flex-col items-center">
         <div className="md:-top-10 -top-5 absolute">
