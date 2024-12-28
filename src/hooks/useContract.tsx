@@ -76,15 +76,15 @@ export function useGetDividendTime() {
 //     });
 // }
 
-// Hook for 'maxActivities' function
-export function useMaxActivities(_num: bigint) {
-    return useReadContract({
-        address: byForexConfig.address as `0x${string}`,
-        abi: byForexConfig.abi,
-        functionName: 'getRecentActivities',
-        args: [_num],
-    });
-}
+// // Hook for 'maxActivities' function
+// export function useMaxActivities(_num: bigint) {
+//     return useReadContract({
+//         address: byForexConfig.address as `0x${string}`,
+//         abi: byForexConfig.abi,
+//         functionName: 'getRecentActivities',
+//         args: [_num],
+//     });
+// }
 
 export function useGetDividendPool() {
     return useReadContract({
@@ -108,7 +108,7 @@ export const useGetActivity = (id: bigint) => {
 // Write Hook Example
 export const useRegister = (_ref: bigint, _newAcc: `0x${string}`, amt: bigint) => {
     const [txHash, setTxHash] = useState<any>(null);
-    const { writeContract, isSuccess, isPending, isError ,error,failureReason} = useWriteContract()
+    const { writeContract, isSuccess, isPending, isError ,error,failureReason, data} = useWriteContract()
     //   const [isLoading, setIsLoading,] = useState(false)
     const register = async () => {
         const txHashx = writeContract({
@@ -119,7 +119,7 @@ export const useRegister = (_ref: bigint, _newAcc: `0x${string}`, amt: bigint) =
         });
         setTxHash(txHashx);
     };
-    return { register, txHash, isSuccess, isPending, isError,error,failureReason };
+    return { register, txHash, isSuccess, isPending, isError,error,failureReason , data};
 };
 
 
@@ -173,11 +173,11 @@ export const useGetDirectTeamUsers = (_user: bigint) => {
     });
 };
 
-export function useGetRecentActivities(userId: bigint) {
-    return useReadContract({
-        address: byForexConfig.address as `0x${string}`,
-        abi: byForexConfig.abi,
-        functionName: 'getRecentActivities',
-        args: [userId],
-    });
-}
+// export function useGetRecentActivities(userId: bigint) {
+//     return useReadContract({
+//         address: byForexConfig.address as `0x${string}`,
+//         abi: byForexConfig.abi,
+//         functionName: 'getRecentActivities',
+//         args: [userId],
+//     });
+// }
