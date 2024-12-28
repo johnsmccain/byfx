@@ -12,7 +12,7 @@ import { useAccount } from 'wagmi';
 export function InvestmentsList() {
       const { address } = useAccount()
       const {data:userId} = useUserId(address as `0x${string}`)
-      const {data:userInfo} = useUserInfo(userId as bigint)
+      // const {data:userInfo} = useUserInfo(userId as bigint)
       // const parsedUserInfo = parseUserInfo([userInfo][0] || [])
     // const {data:getRecentActivities} = useGetRecentActivities(parsedUserInfo.id)
   return (
