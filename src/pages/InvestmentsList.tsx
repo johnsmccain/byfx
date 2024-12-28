@@ -2,16 +2,16 @@
 // import { DataTable } from '../components/DataTable';
 import { Wallet } from 'lucide-react';
 // import { DataTable } from '../components/DataTable';
-import {  useUserId, useUserInfo } from '../hooks/useContract';
+// import {  useUserId, useUserInfo } from '../hooks/useContract';
 // import { parseUserInfo } from '../utils/helper';
-import { useAccount } from 'wagmi';
+// import { useAccount } from 'wagmi';
 
 
 
 
 export function InvestmentsList() {
-      const { address } = useAccount()
-      const {data:userId} = useUserId(address as `0x${string}`)
+      // const { address } = useAccount()
+      // const {data:userId} = useUserId(address as `0x${string}`)
       // const {data:userInfo} = useUserInfo(userId as bigint)
       // const parsedUserInfo = parseUserInfo([userInfo][0] || [])
     // const {data:getRecentActivities} = useGetRecentActivities(parsedUserInfo.id)
