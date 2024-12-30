@@ -5,6 +5,7 @@ import { ReferralsList } from './pages/ReferralsList'
 // import { InvestmentsList } from './pages/InvestmentsList'
 import { Toaster } from 'react-hot-toast'
 import Navbar from './components/Navbar'
+import { InvestmentsList } from './pages/InvestmentsList'
 
 function App() {
 
@@ -15,7 +16,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/referals" element={<ReferralsList />} />
-        {/* <Route path="/activities" element={<InvestmentsList />} /> */}
+        <Route path="/activities" element={<InvestmentsList />} />
       </Routes>
       <Toaster />
 

@@ -77,14 +77,14 @@ export function useGetDividendTime() {
 // }
 
 // // Hook for 'maxActivities' function
-// export function useMaxActivities(_num: bigint) {
-//     return useReadContract({
-//         address: byForexConfig.address as `0x${string}`,
-//         abi: byForexConfig.abi,
-//         functionName: 'getRecentActivities',
-//         args: [_num],
-//     });
-// }
+export function useUserPoolRank(_num: bigint) {
+    return useReadContract({
+        address: byForexConfig.address as `0x${string}`,
+        abi: byForexConfig.abi,
+        functionName: 'userPoolRank',
+        args: [_num],
+    });
+}
 
 export function useGetDividendPool() {
     return useReadContract({
@@ -96,11 +96,11 @@ export function useGetDividendPool() {
 
 
 // Read Hook Example
-export const useGetActivity = (id: bigint) => {
+export const useUserMissedIncome = (id: bigint) => {
     return useReadContract({
         address: byForexConfig.address as `0x${string}`,
         abi: byForexConfig.abi,
-        functionName: "activity",
+        functionName: "userMissedIncome",
         args: [id],
     });
 };
@@ -173,11 +173,11 @@ export const useGetDirectTeamUsers = (_user: bigint) => {
     });
 };
 
-// export function useGetRecentActivities(userId: bigint) {
-//     return useReadContract({
-//         address: byForexConfig.address as `0x${string}`,
-//         abi: byForexConfig.abi,
-//         functionName: 'getRecentActivities',
-//         args: [userId],
-//     });
-// }
+export function useGetRecentActivities(userId: bigint, pageNumber: bigint) {
+    return useReadContract({
+        address: byForexConfig.address as `0x${string}`,
+        abi: byForexConfig.abi,
+        functionName: 'getRecentActivities',
+        args: [userId, pageNumber],
+    });
+}

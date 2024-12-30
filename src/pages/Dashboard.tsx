@@ -1,4 +1,4 @@
-import { useAccount,  useWaitForTransactionReceipt } from "wagmi"
+import { useAccount, useWaitForTransactionReceipt } from "wagmi"
 import {
   useGetDividendIncome,
   // useDistributeDividend,
@@ -8,7 +8,9 @@ import {
   useRegister,
   useUpgrade,
   useUserId,
-  useUserInfo
+  useUserInfo,
+  useUserMissedIncome,
+  useUserPoolRank
 } from "../hooks/useContract";
 import { useEffect, useState } from "react";
 import { useApprove } from "../hooks/useERC20Contract";
@@ -17,12 +19,12 @@ import { parseIncomeData, parseUserInfo } from "../utils/helper";
 import toast from "react-hot-toast";
 // import { convertTimestampToDate } from "../utils";
 import { byForexConfig } from "../abi";
-import { readContract} from "wagmi/actions";
+import { readContract } from "wagmi/actions";
 import { config } from "../utils/wagmi";
 const packages = ["20", "40", "80", "160", "320", "640", "1280", "2560", "5120", "10240", "20480", "40960"]
 const Dashboard = () => {
 
-  const [referralCode, setReferralCode] = useState(1000);
+  const [referralCode, setReferralCode] = useState("1000");
   const { address } = useAccount()
   const { upgrade: upgradeLevel, isPending: isUpgradePending, isError: isUpgradeError, data: upgradeTxHash } = useUpgrade();
   const { data: userId } = useUserId(address as `0x${string}`)
@@ -31,10 +33,12 @@ const Dashboard = () => {
   const [parsedUserInfo, setParsedUserInfo] = useState(parseUserInfo([userInfo][0] || []));
   const [packageId, setPackageId] = useState<number>((Number(parsedUserInfo.level)));
   const [investmentAmount, setInvestmentAmount] = useState<string>(packages[packageId]);
-  const { approve, isPending: isApprovePending, data: approveTxHash, isError: isApproveError,  } = useApprove(byForexConfig.address, parseEther(investmentAmount));
-  const { register, isPending: isRegisterPending,  isError: isRegisterError, data: registerTxHash } = useRegister(BigInt(referralCode), address as `0x${string}`, parseEther(investmentAmount));
-  const { data: getDividendIncome } = useGetDividendIncome(parsedUserInfo.id);
+  const { approve, isPending: isApprovePending, data: approveTxHash, isError: isApproveError, } = useApprove(byForexConfig.address, parseEther(investmentAmount));
+  const { register, isPending: isRegisterPending, isError: isRegisterError, data: registerTxHash } = useRegister(BigInt(referralCode), address as `0x${string}`, parseEther(investmentAmount));
+  const { data: getDividendIncome } = useGetDividendIncome(userId as bigint);
   const parsedUserIncome = parseIncomeData([getDividendIncome][0] || [])
+  const { data: getMissedIncome } = useUserMissedIncome(userId as bigint)
+  const { data: userPoolRank } = useUserPoolRank(userId as bigint)
 
   // Get the full URL
   const getfullURL = `${window.location.origin}?referral=${parsedUserInfo.id}`;
@@ -72,10 +76,10 @@ const Dashboard = () => {
 
 
   // console.log(`approveTransactionConfirmations ${approveTransactionisFetched} transactionTransactionConfirmations ${transactionisFetched}`)
-  const { isFetched: upgradeWaitForTransactionReceipt} = useWaitForTransactionReceipt({
+  const { isFetched: registerWaitForTransactionReceipt } = useWaitForTransactionReceipt({
     hash: registerTxHash,
   })
-  const {isFetched: registerWaitForTransactionReceipt} = useWaitForTransactionReceipt({
+  const { isFetched:  upgradeWaitForTransactionReceipt} = useWaitForTransactionReceipt({
     hash: upgradeTxHash,
   })
   const { isFetched: approveWaitForTransactionReceipt } = useWaitForTransactionReceipt({
@@ -86,9 +90,9 @@ const Dashboard = () => {
   useEffect(() => {
     if (registerWaitForTransactionReceipt) {
       toast.success("Registration successful")
-    }else if (upgradeWaitForTransactionReceipt) {
+    } else if (upgradeWaitForTransactionReceipt) {
       toast.success("Upgrading successful")
-    }else if (approveWaitForTransactionReceipt) {
+    } else if (approveWaitForTransactionReceipt) {
       toast.success("Approval successful")
     }
   }, [upgradeWaitForTransactionReceipt, registerWaitForTransactionReceipt, approveWaitForTransactionReceipt])
@@ -97,28 +101,29 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (isRegisterError) {
-      toast.error("Check Your Wallet balance and Try Again")
+      setIsAllowed(false)
+      toast.error("Registration Failed, Check Your Wallet balance and Try Again")
     }
     if (isApproveError) {
       setIsAllowed(false)
-      toast.error("Check Your Wallet balance and Try Again")
+      toast.error("Approval Failed, Check Your Wallet balance and Try Again")
     }
   }, [isRegisterError, isApproveError])
 
 
   const userInfomation = async () => {
     try {
-      const res = await readContract(config,{
-      address: byForexConfig.address as `0x${string}`,
-      abi: byForexConfig.abi,
-      functionName: 'userInfo',
-      args: [userId as bigint],
-    })
-    // toast.success(Number(c.totalDeposit) as any)
-    return res
-  } catch (error) {
-    console.error('Error fetching blockchain data:', error);
-  }
+      const res = await readContract(config, {
+        address: byForexConfig.address as `0x${string}`,
+        abi: byForexConfig.abi,
+        functionName: 'userInfo',
+        args: [userId as bigint],
+      })
+      // toast.success(Number(c.totalDeposit) as any)
+      return res
+    } catch (error) {
+      console.error('Error fetching blockchain data:', error);
+    }
   }
   useEffect(() => {
     userInfomation().then((e) => {
@@ -139,13 +144,13 @@ const Dashboard = () => {
       setIsAllowed(false)
     })
   }, [registerWaitForTransactionReceipt, upgradeWaitForTransactionReceipt]);
-  
+
   useEffect(() => {
-      if (approveWaitForTransactionReceipt) {
-        handleInvest()
-      }
+    if (approveWaitForTransactionReceipt) {
+      handleInvest()
+    }
   }, [approveWaitForTransactionReceipt]);
-  
+
 
   return (
     <div className="">
@@ -192,9 +197,22 @@ const Dashboard = () => {
                 disabled={Number(parseEther(investmentAmount)) === 0 || isApprovePending || isRegisterPending || isUpgradePending || isAllowed}
                 className={`w-full py-2 rounded-lg text-lg font-semibold bg-primary ${Number(parseEther(investmentAmount)) === 0 || isApprovePending || isRegisterPending || isUpgradePending ? "outline-none opacity-50 cursor-not-allowed" : isUpgradeError || isRegisterError ? "outline-none cursor-not-allowed bg-red-500 text-white" : "text-white cursor-pointer"}`}
               >
-                {isApprovePending || isRegisterPending || isUpgradePending || isAllowed? "Processing..." : `Approve ${investmentAmount} USDT`}
+                {isApprovePending || isRegisterPending || isUpgradePending || isAllowed ? "Processing..." : `Approve ${investmentAmount} USDT`}
               </button>
-                {/* <p className="">{`${approveWaitForTransactionReceipt? "Approved" : "Not Approved"} ${approveWaitForTransactionReceipt}` }</p> */}
+
+              <div className="flex bg-neutral-100 rounded-md p-2 justify-between">
+                <p>Total Missed Income</p>
+                <p className="text-gray-600">${formatEther(BigInt(getMissedIncome?.toString()|| "0"))}</p>
+              </div>
+              <p className="">{referralCode}</p>
+              {/* <div className=" bg-white w-full rounded-lg py-5 px-3 flex flex-col gap-5 ">
+                <div className="flex justify-between">
+                  <p className="font-bold text-lg">Missed Income:</p>
+                  <p className="text-gray-700 ml-1">${}</p>
+                </div>
+
+              </div> */}
+              {/* <p className="">{`${approveWaitForTransactionReceipt? "Approved" : "Not Approved"} ${approveWaitForTransactionReceipt}` }</p> */}
             </div>
           </div>
           <div>
@@ -206,14 +224,14 @@ const Dashboard = () => {
                 {[parsedUserIncome.firstValue, parsedUserIncome.secondValue, parsedUserIncome.thirdValue, parsedUserIncome.fourthValue].map((poolBalance, index) => (
                   <div key={index} className="bg-neutral-200 flex justify-between p-2 rounded-lg">
                     <p className="text-lg font-semibold my-auto">Pool {index + 1}</p>
-                    <p className="text-primary">
+                    <p className="text-gray-700">
                       {formatEther(poolBalance)}
                     </p>
                     <button
-                      className="rounded-lg border-2 border-primary text-primary py-1 px-3 font-semibold"
+                      className="rounded-lg border-2 border-primary text-gray-700 py-1 px-3 font-semibold"
 
                     >
-                      {formatEther(poolBalance) === '0' ? 'Ineligible' : 'Eligible'}
+                      {Number(userPoolRank) === 0 ? 'Not Eligible' :Number(userPoolRank) < 2 ? 'Eligible' :Number(userPoolRank) < 3 ? 'Eligible' :Number(userPoolRank) < 4 ? 'Eligible' : 'Eligible'}
                     </button>
                   </div>
                 ))}
@@ -227,9 +245,9 @@ const Dashboard = () => {
               <div className=" bg-white w-full rounded-lg py-5 px-3 flex flex-col gap-5 ">
                 <div className="flex justify-between">
                   <p className="font-bold text-lg">Total income claimed</p>
-                  <p className="text-primary">${formatEther(parsedUserInfo.totalIncome)}</p>
+                  <p className="text-gray-700 ml-1">${formatEther(parsedUserInfo.totalIncome)}</p>
                 </div>
-               
+
               </div>
             </div>
           </div>
