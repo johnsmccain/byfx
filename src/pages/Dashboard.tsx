@@ -150,7 +150,7 @@ const Dashboard = () => {
   return (
     <div className="">
       <div className="px-3 md:px-28 py-20 flex flex-col  pt-20">
-        <div className="h-screen w-full fixed top-0 left-0 flex justify-center flex-col items-center">
+        {/* <div className="h-screen w-full fixed top-0 left-0 flex justify-center flex-col items-center">
           <div className="md:-top-10 -top-5 absolute">
             <img src="/svgs/OFF.svg" alt="off img" />
           </div>
@@ -162,7 +162,7 @@ const Dashboard = () => {
             <img src="/svgs/bg.svg" className="h-full" alt="bg-galaxy" />
             <img src="/svgs/bg.svg" alt="bg-galaxy" />
           </div>
-        </div>
+        </div> */}
 
 
         <div className="flex gap-5 z-20 flex-col">

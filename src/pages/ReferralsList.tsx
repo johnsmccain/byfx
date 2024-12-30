@@ -28,7 +28,7 @@ export function ReferralsList() {
     <div className="">
       <div className="space-y-6 mt-20 container mx-auto">
         <div className="flex items-center space-x-3">
-          <Users className="w-8 h-8 text-blue-600" />
+          <Users className="w-8 h-8 text-primary" />
           <h1 className="text-2xl font-bold text-white">Recent Activities</h1>
         </div>
         <DataTable headers={['User ID', "Income Earned"]}>

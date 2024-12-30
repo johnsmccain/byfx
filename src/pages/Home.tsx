@@ -34,7 +34,7 @@ const Home = () => {
   return (
     <div>
        <Navbar />
-      <div className=" w-full fixed top-0 left-0 flex justify-center flex-col items-center">
+      {/* <div className=" w-full fixed top-0 left-0 flex justify-center flex-col items-center">
         <div className="md:-top-10 -top-5 absolute">
           <img src="/svgs/OFF.svg" alt="off img" />
         </div>
@@ -46,11 +46,11 @@ const Home = () => {
           <img src="/svgs/bg.svg" className="h-full" alt="bg-galaxy" />
           <img src="/svgs/bg.svg" alt="bg-galaxy" />
         </div>
-      </div>
+      </div> */}
 
       {/* =================== MAIN PAGE ====================== */}
       <div className="py-20 md:py-32 px-3 overflow-y-auto h-screen w-full home container mx-auto">
-        <div>
+        <div className="flex flex-col gap-5 items-center md:p-20 w-[900px] m-auto border-primary border rounded-lg border-opacity-20 bg-primary bg-opacity-10 backdrop-blur-md">
           <p className="font-bold text-2xl text-center md:text-5xl text-white">Join Now</p>
           <p className="text-white px-2 py-3 text-sm md:text-base">
           Experience a fully decentralized platform with no admin control, where all income is automatically distributed through smart contracts. Transparent, secure, and fair – our system empowers you to grow your network and earn in real time without intermediaries. Join today and take control of your financial future!          </p>
