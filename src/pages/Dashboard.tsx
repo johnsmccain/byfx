@@ -204,7 +204,6 @@ const Dashboard = () => {
                 <p>Total Missed Income</p>
                 <p className="text-gray-600">${formatEther(BigInt(getMissedIncome?.toString()|| "0"))}</p>
               </div>
-              <p className="">{referralCode}</p>
               {/* <div className=" bg-white w-full rounded-lg py-5 px-3 flex flex-col gap-5 ">
                 <div className="flex justify-between">
                   <p className="font-bold text-lg">Missed Income:</p>
