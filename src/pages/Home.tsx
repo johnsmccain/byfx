@@ -27,6 +27,8 @@ const Home = () => {
   useEffect(() => {
     if(location.search.split('=')[1]){
       localStorage.setItem('referralCode', JSON.stringify(location.search.split('=')[1]));
+    }else{
+      localStorage.setItem('referralCode', JSON.stringify('1000'));
     }
     console.log(localStorage.getItem('referralCode'))
   }, [location.search.split('=')[1]])
