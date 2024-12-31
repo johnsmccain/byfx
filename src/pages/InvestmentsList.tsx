@@ -27,7 +27,7 @@ export function InvestmentsList() {
   const { data: getRecentActivities } = useGetRecentActivities(parsedUserInfo.id, BigInt((currentPage - 1) * itemsPerPage))
   
     // Calculate total pages (assuming getRecentActivities.totalItems exists)
-    const totalItems = 100
+    const totalItems = 10
     const totalPages = Math.ceil(totalItems / itemsPerPage);
   
     const handlePageChange = (page: number) => {
@@ -36,13 +36,14 @@ export function InvestmentsList() {
 
 
   return (
-    <div className="">
-      <div className="space-y-6 mt-20 container mx-auto">
+    <div className=" h-[calc(100vh-104px)] p-3">
+      <div className=" mt-20 container mx-auto flex flex-col justify-between ">
+        <div className="space-y-6">
         <div className="flex items-center space-x-3">
           <Wallet className="w-8 h-8 text-blue-600" />
           <h1 className="text-2xl font-bold text-white">Recent Activities</h1>
         </div>
-        <DataTable headers={['User ID', "Income Earned", "Mode"]}>
+        <DataTable headers={['User ID', "Income Earned", "Mode"]} >
           {getRecentActivities?.map((referral) => (
             <tr key={Number(referral.id)}>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -63,6 +64,7 @@ export function InvestmentsList() {
             </tr>
           ))}
         </DataTable>
+        </div>
         <div className="flex justify-center space-x-2 mt-4">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
@@ -71,7 +73,7 @@ export function InvestmentsList() {
           >
             Previous
           </button>
-          {Array.from({ length: totalPages }, (_, i) => (
+          {/* {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i}
               onClick={() => handlePageChange(i + 1)}
@@ -81,7 +83,7 @@ export function InvestmentsList() {
             >
               {i + 1}
             </button>
-          ))}
+          ))} */}
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}

@@ -25,7 +25,7 @@ export function ReferralsList() {
   // const { data: getDirectTeamUsers } = useGetDirectTeamUsers(parsedUserInfo.id)
   // const { data: getRecentActivities } = useActivity(parsedUserInfo.id)
   return (
-    <div className="">
+    <div className="p-3">
       <div className="space-y-6 mt-20 container mx-auto">
         <div className="flex items-center space-x-3">
           <Users className="w-8 h-8 text-primary" />
