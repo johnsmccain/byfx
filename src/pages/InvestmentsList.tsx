@@ -48,7 +48,7 @@ export function InvestmentsList() {
                 {Number(referral.id)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {formatEther(referral.amt)}
+                ${formatEther(referral.amt)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 {Number(referral.mode) === 0
