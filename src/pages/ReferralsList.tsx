@@ -29,7 +29,7 @@ export function ReferralsList() {
       <div className="space-y-6 mt-20 container mx-auto">
         <div className="flex items-center space-x-3">
           <Users className="w-8 h-8 text-primary" />
-          <h1 className="text-2xl font-bold text-white">Recent Activities</h1>
+          <h1 className="text-2xl font-bold text-white">Direct Team</h1>
         </div>
         <DataTable headers={['User Addr', "User ID"]}>
           {getDirectTeamUsers?.map((referral) => (
@@ -38,7 +38,7 @@ export function ReferralsList() {
                 {referral.account.slice(0, 4) + '...' + referral.account.slice(-4)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {Number(referral.directTeam)}
+                {Number(referral.id)}
               </td>
             </tr>
           ))}

@@ -41,7 +41,7 @@ export function InvestmentsList() {
           <Wallet className="w-8 h-8 text-blue-600" />
           <h1 className="text-2xl font-bold text-white">Recent Activities</h1>
         </div>
-        <DataTable headers={['User ID', "Income Earned", "Mode"]} >
+        <DataTable headers={['User ID', "Amount", "Mode"]} >
           {getRecentActivities?.map((referral, index) => (
             <tr key={index}>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
