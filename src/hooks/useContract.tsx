@@ -155,12 +155,21 @@ export const useUpgrade = () => {
 };
 
 // Hook for 'activity' function
+
 export function useGetDividendIncome(userId: bigint) {
     return useReadContract({
         address: byForexConfig.address as `0x${string}`,
         abi: byForexConfig.abi,
         functionName: 'getDividendIncome',
         args: [userId],
+    }) as any;
+}
+export function useUserAvailableToClaim(userId: bigint, id: bigint) {
+    return useReadContract({
+        address: byForexConfig.address as `0x${string}`,
+        abi: byForexConfig.abi,
+        functionName: 'userAvailableToClaim',
+        args: [userId, id],
     }) as any;
 }
 export function useCheckPoolEligibility(userId: bigint) {
@@ -171,6 +180,22 @@ export function useCheckPoolEligibility(userId: bigint) {
         args: [userId],
     }) as any;
 }
+
+export const useClaimDividen = () => {
+    const { writeContract, isSuccess, isPending, isError,data, status} = useWriteContract()
+    // useWaitForTransactionReceipt()
+    const claimDividend = async (poolId: bigint) => {
+        writeContract({
+            address: byForexConfig.address as `0x${string}`,
+            abi: byForexConfig.abi,
+            functionName: "claimDividend",
+            args: [poolId],
+        });
+    };
+
+    return { claimDividend, isSuccess, isPending, isError, data, status };
+};
+
 // Other Hooks Example
 export const useGetDirectTeamUsers = (_user: bigint) => {
     return useReadContract({

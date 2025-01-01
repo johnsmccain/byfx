@@ -38,7 +38,7 @@ export function InvestmentsList() {
       <div className=" mt-20 container mx-auto flex flex-col justify-between ">
         <div className="space-y-6">
         <div className="flex items-center space-x-3">
-          <Wallet className="w-8 h-8 text-blue-600" />
+          <Wallet className="w-8 h-8 text-primary" />
           <h1 className="text-2xl font-bold text-white">Recent Activities</h1>
         </div>
         <DataTable headers={['User ID', "Amount", "Mode"]} >

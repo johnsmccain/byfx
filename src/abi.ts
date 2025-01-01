@@ -1,74 +1,6 @@
 export const byForexConfig = {
-  address: "0x6802BeeEF41C6fb38Cf46D2370164eC97E0e583e",
+  address: "0x1888BDDe8dD120F4DD928966F1fDc60e4976c8a4",
   abi:[
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_id",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "pool",
-          "type": "uint256"
-        }
-      ],
-      "name": "addIdToPool",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "distributeDividend",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_ref",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "_newAcc",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amt",
-          "type": "uint256"
-        }
-      ],
-      "name": "register",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_a",
-          "type": "address"
-        }
-      ],
-      "name": "transferOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "transferOwnershipToZeroAddress",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
     {
       "inputs": [
         {
@@ -79,33 +11,6 @@ export const byForexConfig = {
       ],
       "stateMutability": "nonpayable",
       "type": "constructor"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_id",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_lvls",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amt",
-          "type": "uint256"
-        }
-      ],
-      "name": "upgrade",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "stateMutability": "payable",
-      "type": "receive"
     },
     {
       "inputs": [
@@ -140,6 +45,24 @@ export const byForexConfig = {
       "inputs": [
         {
           "internalType": "uint256",
+          "name": "_id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "pool",
+          "type": "uint256"
+        }
+      ],
+      "name": "addIdToPool",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
           "name": "_user",
           "type": "uint256"
         }
@@ -159,6 +82,32 @@ export const byForexConfig = {
       "inputs": [
         {
           "internalType": "uint256",
+          "name": "pool",
+          "type": "uint256"
+        }
+      ],
+      "name": "claimDividend",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "defaultRefer",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         },
@@ -169,6 +118,26 @@ export const byForexConfig = {
         }
       ],
       "name": "directTeam",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "distributeDividend",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "dividendAddrBal",
       "outputs": [
         {
           "internalType": "uint256",
@@ -211,6 +180,19 @@ export const byForexConfig = {
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "feeReceiver",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -336,9 +318,9 @@ export const byForexConfig = {
       "name": "getDividendPool",
       "outputs": [
         {
-          "internalType": "uint256[12]",
+          "internalType": "uint256[4]",
           "name": "",
-          "type": "uint256[12]"
+          "type": "uint256[4]"
         }
       ],
       "stateMutability": "view",
@@ -708,6 +690,42 @@ export const byForexConfig = {
     },
     {
       "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_ref",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_newAcc",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amt",
+          "type": "uint256"
+        }
+      ],
+      "name": "register",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "startTime",
       "outputs": [
         {
@@ -762,6 +780,49 @@ export const byForexConfig = {
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_a",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "transferOwnershipToZeroAddress",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_lvls",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amt",
+          "type": "uint256"
+        }
+      ],
+      "name": "upgrade",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "usdttoken",
       "outputs": [
@@ -788,6 +849,30 @@ export const byForexConfig = {
         }
       ],
       "name": "userActivities",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "userAvailableToClaim",
       "outputs": [
         {
           "internalType": "uint256",
@@ -914,6 +999,10 @@ export const byForexConfig = {
       ],
       "stateMutability": "view",
       "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
     }
   ] as const
 };

@@ -1,6 +1,7 @@
 import { useAccount, useWaitForTransactionReceipt } from "wagmi"
 import {
   useCheckPoolEligibility,
+  useClaimDividen,
   useGetDividendIncome,
   // useGetDividendIncome,
   // useDistributeDividend,
@@ -9,6 +10,7 @@ import {
   // useGetDividendTime, useGetTotalUsers,
   useRegister,
   useUpgrade,
+  useUserAvailableToClaim,
   useUserId,
   useUserInfo,
   useUserMissedIncome,
@@ -38,11 +40,16 @@ const Dashboard = () => {
   const { approve, isPending: isApprovePending, data: approveTxHash, isError: isApproveError, } = useApprove(byForexConfig.address, parseEther(investmentAmount));
   const { register, isPending: isRegisterPending, isError: isRegisterError, data: registerTxHash } = useRegister(BigInt(referralCode), address as `0x${string}`, parseEther(investmentAmount));
   const { data: getDividendIncome } = useGetDividendIncome(userId as bigint);
+
   const parsedUserIncome = parseIncomeData([getDividendIncome][0] || [])
   const { data: getMissedIncome } = useUserMissedIncome(userId as bigint)
   // const { data: userPoolRank } = useUserPoolRank(userId as bigint)
   const { data: checkPoolEligibility } = useCheckPoolEligibility(userId as bigint)
-
+  const { data: userAvailableToClaim1 } = useUserAvailableToClaim(userId as bigint, BigInt("0"))
+  const { data: userAvailableToClaim2 } = useUserAvailableToClaim(userId as bigint, BigInt("1"))
+  const { data: userAvailableToClaim3 } = useUserAvailableToClaim(userId as bigint, BigInt("2"))
+  const { data: userAvailableToClaim4 } = useUserAvailableToClaim(userId as bigint, BigInt("3"))
+  const { claimDividend, data: claimDividendTxHash } = useClaimDividen()
   // Get the full URL
   const getfullURL = `${window.location.origin}?referral=${parsedUserInfo.id}`;
 
@@ -55,6 +62,7 @@ const Dashboard = () => {
   };
 
   const [isAllowed, setIsAllowed] = useState(false);
+  const [userAvailableToClaimed, setuserAvailableToClaimed] = useState([userAvailableToClaim1, userAvailableToClaim2, userAvailableToClaim3, userAvailableToClaim4]);
   /**
    * Approves the ERC20 contract to spend the user's investment amount
    */
@@ -88,8 +96,23 @@ const Dashboard = () => {
   const { isFetched: approveWaitForTransactionReceipt } = useWaitForTransactionReceipt({
     hash: approveTxHash,
   })
+  const { isFetched: claimDividendWaitForTransactionReceipt } = useWaitForTransactionReceipt({
+    hash: claimDividendTxHash,
+  })
+
+  
   // console.log(`approveWaitForTransactionReceipt ${approveWaitForTransactionReceipt} transactionWaitForTransactionReceipt ${transactionWaitForTransactionReceipt}`)
   const [currentLevel, setCurrentLevel,] = useState<number>(0)
+// const userAvailableToClaim = async (id: bigint) =>{
+
+//   return readContract(config,{
+//     address: byForexConfig.address as `0x${string}`,
+//     abi: byForexConfig.abi,
+//     functionName: 'userAvailableToClaim',
+//     args: [userId as bigint, id],
+//   })
+// }
+
   useEffect(() => {
     if (registerWaitForTransactionReceipt) {
       toast.success("Registration successful")
@@ -139,6 +162,9 @@ const Dashboard = () => {
   }, [userId])
 
   useEffect(() => {
+    setuserAvailableToClaimed([userAvailableToClaim1, userAvailableToClaim2, userAvailableToClaim3, userAvailableToClaim4])
+  }, [claimDividendWaitForTransactionReceipt, userAvailableToClaim1])
+  useEffect(() => {
     userInfomation().then((e) => {
       const c = parseUserInfo(e as any || [])
       setInvestmentAmount(packages[Number(c.level)])
@@ -153,7 +179,6 @@ const Dashboard = () => {
       handleInvest()
     }
   }, [approveWaitForTransactionReceipt]);
-
 
   return (
     <div className="">
@@ -227,12 +252,14 @@ const Dashboard = () => {
                   <div key={index} className="bg-neutral-200 flex justify-between p-2 rounded-lg">
                     <p className="text-lg font-semibold my-auto">Pool {index + 1}</p>
                     <p className="text-gray-700">
-                      {formatEther(poolBalance)}
+                      {formatEther(poolBalance)} - {userAvailableToClaimed && Number(userAvailableToClaimed[index])}
                     </p>
                     <button
+                      onClick={() => Number(userAvailableToClaimed[index]) === 0 ? claimDividend(BigInt(index)): null}
+                      disabled={checkPoolEligibility && Number(checkPoolEligibility[index]) === 0}
                       className="rounded-lg border-2 border-primary text-gray-700 py-1 px-3 font-semibold"
                     >
-                      {checkPoolEligibility && Number(checkPoolEligibility[index]) === 0 ? 'Not Eligible' : 'Eligible'}
+                      {checkPoolEligibility && Number(checkPoolEligibility[index]) === 0 ? 'Not Eligible' : userAvailableToClaimed && Number(userAvailableToClaimed[index]) === 0 ? 'Claim' : 'Eligible'}
                     </button>
                   </div>
                 ))}
