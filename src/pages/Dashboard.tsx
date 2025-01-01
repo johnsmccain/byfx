@@ -174,6 +174,7 @@ const Dashboard = () => {
     })
   }, [registerWaitForTransactionReceipt, upgradeWaitForTransactionReceipt]);
 
+  
   useEffect(() => {
     if (approveWaitForTransactionReceipt) {
       handleInvest()

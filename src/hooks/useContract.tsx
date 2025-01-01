@@ -181,6 +181,7 @@ export function useCheckPoolEligibility(userId: bigint) {
     }) as any;
 }
 
+
 export const useClaimDividen = () => {
     const { writeContract, isSuccess, isPending, isError,data, status} = useWriteContract()
     // useWaitForTransactionReceipt()
