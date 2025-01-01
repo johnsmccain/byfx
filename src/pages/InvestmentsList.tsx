@@ -21,14 +21,12 @@ export function InvestmentsList() {
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10; // Number of items per page
   
   // Fetch recent activities with pagination
-  const { data: getRecentActivities } = useGetRecentActivities(parsedUserInfo.id, BigInt((currentPage - 1) * itemsPerPage))
+  const { data: getRecentActivities } = useGetRecentActivities(parsedUserInfo.id, BigInt((currentPage)))
   
     // Calculate total pages (assuming getRecentActivities.totalItems exists)
-    const totalItems = 10
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const totalItems = getRecentActivities?.length || 0;
   
     const handlePageChange = (page: number) => {
       setCurrentPage(page);
@@ -44,8 +42,8 @@ export function InvestmentsList() {
           <h1 className="text-2xl font-bold text-white">Recent Activities</h1>
         </div>
         <DataTable headers={['User ID', "Income Earned", "Mode"]} >
-          {getRecentActivities?.map((referral) => (
-            <tr key={Number(referral.id)}>
+          {getRecentActivities?.map((referral, index) => (
+            <tr key={index}>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 {Number(referral.id)}
               </td>
@@ -86,7 +84,7 @@ export function InvestmentsList() {
           ))} */}
           <button
             onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
+            disabled={Number(totalItems) < 10}
             className="px-4 py-2 bg-primary text-white rounded disabled:bg-gray-400"
           >
             Next

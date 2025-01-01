@@ -1,6 +1,7 @@
 import { useAccount, useWaitForTransactionReceipt } from "wagmi"
 import {
-  useGetDividendIncome,
+  useCheckPoolEligibility,
+  // useGetDividendIncome,
   // useDistributeDividend,
   // useGetDividendPool,
   // useGetDividendTime,
@@ -10,12 +11,12 @@ import {
   useUserId,
   useUserInfo,
   useUserMissedIncome,
-  useUserPoolRank
+  // useUserPoolRank
 } from "../hooks/useContract";
 import { useEffect, useState } from "react";
 import { useApprove } from "../hooks/useERC20Contract";
 import { formatEther, parseEther } from "viem";
-import { parseIncomeData, parseUserInfo } from "../utils/helper";
+import { parseUserInfo } from "../utils/helper";
 import toast from "react-hot-toast";
 // import { convertTimestampToDate } from "../utils";
 import { byForexConfig } from "../abi";
@@ -35,10 +36,11 @@ const Dashboard = () => {
   const [investmentAmount, setInvestmentAmount] = useState<string>(packages[packageId]);
   const { approve, isPending: isApprovePending, data: approveTxHash, isError: isApproveError, } = useApprove(byForexConfig.address, parseEther(investmentAmount));
   const { register, isPending: isRegisterPending, isError: isRegisterError, data: registerTxHash } = useRegister(BigInt(referralCode), address as `0x${string}`, parseEther(investmentAmount));
-  const { data: getDividendIncome } = useGetDividendIncome(userId as bigint);
-  const parsedUserIncome = parseIncomeData([getDividendIncome][0] || [])
+  // const { data: getDividendIncome } = useGetDividendIncome(userId as bigint);
+  // const parsedUserIncome = parseIncomeData([getDividendIncome][0] || [])
   const { data: getMissedIncome } = useUserMissedIncome(userId as bigint)
-  const { data: userPoolRank } = useUserPoolRank(userId as bigint)
+  // const { data: userPoolRank } = useUserPoolRank(userId as bigint)
+  const { data: checkPoolEligibility } = useCheckPoolEligibility(userId as bigint)
 
   // Get the full URL
   const getfullURL = `${window.location.origin}?referral=${parsedUserInfo.id}`;
@@ -220,7 +222,8 @@ const Dashboard = () => {
             </div>
             <div className="bg-white w-full rounded-lg py-5 px-3">
               <div className="flex flex-col gap-3">
-                {[parsedUserIncome.firstValue, parsedUserIncome.secondValue, parsedUserIncome.thirdValue, parsedUserIncome.fourthValue].map((poolBalance, index) => (
+                
+                {checkPoolEligibility?.map((poolBalance: any, index:number) => (
                   <div key={index} className="bg-neutral-200 flex justify-between p-2 rounded-lg">
                     <p className="text-lg font-semibold my-auto">Pool {index + 1}</p>
                     <p className="text-gray-700">
@@ -230,7 +233,7 @@ const Dashboard = () => {
                       className="rounded-lg border-2 border-primary text-gray-700 py-1 px-3 font-semibold"
 
                     >
-                      {Number(userPoolRank) === 0 ? 'Not Eligible' :Number(userPoolRank) < 2 ? 'Eligible' :Number(userPoolRank) < 3 ? 'Eligible' :Number(userPoolRank) < 4 ? 'Eligible' : 'Eligible'}
+                      {Number(poolBalance) === 0 ? 'Not Eligible' : 'Eligible'}
                     </button>
                   </div>
                 ))}

@@ -6,7 +6,7 @@ import { useAccount } from 'wagmi';
 import {   useGetDirectTeamUsers,  useUserId } from '../hooks/useContract';
 // import { parseUserInfo } from '../utils/helper';
 // import { convertTimestampToDate } from '../utils';
-import { formatEther } from 'viem';
+// import { formatEther } from 'viem';
 
 // type Referral = {
 //   id: string;
@@ -31,14 +31,14 @@ export function ReferralsList() {
           <Users className="w-8 h-8 text-primary" />
           <h1 className="text-2xl font-bold text-white">Recent Activities</h1>
         </div>
-        <DataTable headers={['User ID', "Income Earned"]}>
+        <DataTable headers={['User Addr', "User ID"]}>
           {getDirectTeamUsers?.map((referral) => (
             <tr key={Number(referral.referrer)}>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                {Number(referral.upline)}
+                {referral.account.slice(0, 4) + '...' + referral.account.slice(-4)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {formatEther(referral.directTeamVolume)}
+                {Number(referral.directTeam)}
               </td>
             </tr>
           ))}

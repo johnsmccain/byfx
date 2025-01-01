@@ -163,6 +163,14 @@ export function useGetDividendIncome(userId: bigint) {
         args: [userId],
     }) as any;
 }
+export function useCheckPoolEligibility(userId: bigint) {
+    return useReadContract({
+        address: byForexConfig.address as `0x${string}`,
+        abi: byForexConfig.abi,
+        functionName: 'checkPoolEligibility',
+        args: [userId],
+    }) as any;
+}
 // Other Hooks Example
 export const useGetDirectTeamUsers = (_user: bigint) => {
     return useReadContract({
