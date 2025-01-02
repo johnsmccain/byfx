@@ -1,5 +1,5 @@
 export const byForexConfig = {
-  address: "0xf3fc84CeC6D8FDd22D9e445dd9E55666866dBA2c",
+  address: "0x1766Ba5bE85AF07d7F6F90f0BD64F707ab519FD0",
   abi:[
     {
       "inputs": [
