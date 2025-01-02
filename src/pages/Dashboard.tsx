@@ -116,16 +116,26 @@ const Dashboard = () => {
 // }
 
   useEffect(() => {
-    if (registerWaitForTransactionReceipt) {
-      toast.success("Registration successful")
-    } else if (upgradeWaitForTransactionReceipt) {
-      toast.success("Upgrading successful")
-    } else if (approveWaitForTransactionReceipt) {
-      toast.success("Approval successful")
-    }
-  }, [upgradeWaitForTransactionReceipt, registerWaitForTransactionReceipt, approveWaitForTransactionReceipt])
+    const timer = setTimeout(() => {
+      if (registerWaitForTransactionReceipt) {
+        toast.success("Registration successful")
+      } else if (upgradeWaitForTransactionReceipt) {
+        toast.success("Upgrading successful")
+      } 
+    }, 1000);
 
+    return () => clearTimeout(timer);
+  }, [upgradeWaitForTransactionReceipt, registerWaitForTransactionReceipt])
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+    if (approveWaitForTransactionReceipt) {
+        toast.success("Approval successful")
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [approveWaitForTransactionReceipt])
 
   useEffect(() => {
     if (isRegisterError) {
@@ -176,6 +186,15 @@ const Dashboard = () => {
     })
   }, [registerWaitForTransactionReceipt, upgradeWaitForTransactionReceipt]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if(isUpgradeError || isRegisterError){
+        setIsAllowed(false)
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  },[isUpgradeError, isRegisterError])
   
   useEffect(() => {
     if (approveWaitForTransactionReceipt) {
@@ -221,14 +240,14 @@ const Dashboard = () => {
               </div>
               <div className="flex bg-neutral-200 rounded-md p-2 justify-between">
                 <p>Total slot Purchased</p>
-                <p className="text-primary">${formatEther(parsedUserInfo.totalDeposit)}</p>
+                <p className="text-[#8f7c14]">${formatEther(parsedUserInfo.totalDeposit)}</p>
               </div>
               <button
                 onClick={handleApprove}
-                disabled={Number(parseEther(investmentAmount)) === 0 || isApprovePending || isRegisterPending || isUpgradePending || isAllowed}
-                className={`w-full py-2 rounded-lg text-lg font-semibold bg-primary ${Number(parseEther(investmentAmount)) === 0 || isApprovePending || isRegisterPending || isUpgradePending ? "outline-none opacity-50 cursor-not-allowed" : isUpgradeError || isRegisterError ? "outline-none cursor-not-allowed bg-red-500 text-white" : "text-white cursor-pointer"}`}
+                disabled={Number(parseEther(investmentAmount)) === 0 || isAllowed}
+                className={`w-full py-2 rounded-lg text-lg font-semibold bg-primary ${Number(parseEther(investmentAmount)) === 0 || isApprovePending || isRegisterPending || isUpgradePending || isAllowed ? "outline-none opacity-50 cursor-not-allowed " : isUpgradeError || isRegisterError ? "outline-none  bg-red-500 text-white" : "text-white cursor-pointer"}`}
               >
-                {isApprovePending || isRegisterPending || isUpgradePending || isAllowed ? "Processing..." : `Approve ${investmentAmount} USDT`}
+                {isApprovePending || isRegisterPending || isUpgradePending || isAllowed ? <span className="animate-pulse transition-all ease-in-out">Proccessing...</span> : `Approve ${investmentAmount} USDT`}
               </button>
 
               <div className="flex bg-neutral-100 rounded-md p-2 justify-between">
