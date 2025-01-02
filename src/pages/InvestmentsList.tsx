@@ -18,7 +18,7 @@ export function InvestmentsList() {
   const { data: userId } = useUserId(address as `0x${string}`)
   const { data: userInfo } = useUserInfo(userId as bigint)
   const parsedUserInfo = parseUserInfo([userInfo][0] || [])
-  
+  const { isConnected } = useAccount();
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   
@@ -31,8 +31,23 @@ export function InvestmentsList() {
     const handlePageChange = (page: number) => {
       setCurrentPage(page);
     };
-
-
+  
+    if (!isConnected) {
+      return (
+        <div className="h-screen w-full absolute top-0 left-0 flex justify-center flex-col items-center">
+          <div className="md:-top-10 -top-5 absolute">
+            <img src="/svgs/OFF.svg" alt="off img" />
+          </div>
+          <div className="absolute top-0 left-0 h-screen w-full -z-50">
+            <img
+              src="/svgs/25%.svg"
+              alt="off img"
+              className="w-full h-screen object-cover"
+            />
+          </div>
+        </div>
+      );
+    }
   return (
     <div className=" h-[calc(100vh-104px)] p-3">
       <div className=" mt-20 container mx-auto flex flex-col justify-between ">
