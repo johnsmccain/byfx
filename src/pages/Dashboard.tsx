@@ -37,15 +37,19 @@ const Dashboard = () => {
   // const parsedUserInfo = parseUserInfo([userInfo][0] || [])
   const [parsedUserInfo, setParsedUserInfo] = useState(parseUserInfo([userInfo][0] || []));
   const [packageId, setPackageId] = useState<number>((Number(parsedUserInfo.level)));
-  const [investmentAmount, setInvestmentAmount] = useState<string>(packages[packageId]);
-  const { approve, isPending: isApprovePending, data: approveTxHash, isError: isApproveError, } = useApprove(byForexConfig.address, parseEther(investmentAmount));
-  const { register, isPending: isRegisterPending, isError: isRegisterError, data: registerTxHash } = useRegister(BigInt(referralCode), address as `0x${string}`, parseEther(investmentAmount));
-  const { data: getDividendIncome } = useGetDividendIncome(userId as bigint);
+  const [maxLevel, setMaxLevel] = useState((Number(parsedUserInfo.level)) === 12)
 
+  // console.log(maxLevel)
+  const [investmentAmount, setInvestmentAmount] = useState<string>(maxLevel ? packages[packageId -1] : packages[packageId]);
+  const { approve, isPending: isApprovePending, data: approveTxHash, isError: isApproveError, } = useApprove(byForexConfig.address, parseEther(investmentAmount || "0"));
+  const { register, isPending: isRegisterPending, isError: isRegisterError, data: registerTxHash } = useRegister(BigInt(referralCode), address as `0x${string}`, parseEther(investmentAmount||"0"));
+  const { data: getDividendIncome } = useGetDividendIncome(userId as bigint);
+  // console.log(packages, packageId, packages[packageId])
   const { data: getMissedIncome } = useUserMissedIncome(userId as bigint)
   // const { data: userPoolRank } = useUserPoolRank(userId as bigint)
   const { data: checkPoolEligibility } = useCheckPoolEligibility(userId as bigint)
-
+  
+  
   const { data: userAvailableToClaim1 } = useUserAvailableToClaim(userId as bigint, BigInt("0"))
   const { data: userAvailableToClaim2 } = useUserAvailableToClaim(userId as bigint, BigInt("1"))
   const { data: userAvailableToClaim3 } = useUserAvailableToClaim(userId as bigint, BigInt("2"))
@@ -54,23 +58,23 @@ const Dashboard = () => {
   const { claimDividend, data: claimDividendTxHash } = useClaimDividen()
   // Get the full URL
   const getfullURL = `${window.location.origin}?referral=${parsedUserInfo.id}`;
-
+  
   const handleRegister = async () => {
     await register()
   }
   const handleInvest = async () => {
-    Number(parsedUserInfo.level) >= 1 ? await upgradeLevel(BigInt(userId as bigint), BigInt("1"), parseEther(investmentAmount)) : handleRegister()
-
+    Number(parsedUserInfo.level) >= 1 ? await upgradeLevel(BigInt(userId as bigint), BigInt("1"), parseEther(investmentAmount || "0")) : handleRegister()
+    
   };
-
+  
   const [isAllowed, setIsAllowed] = useState(false);
   const [userAvailableToClaimed, setuserAvailableToClaimed] = useState([userAvailableToClaim1, userAvailableToClaim2, userAvailableToClaim3, userAvailableToClaim4]);
   /**
    * Approves the ERC20 contract to spend the user's investment amount
-   */
-  const handleApprove = () => {
-    setIsAllowed(true)
-    approve();
+  */
+ const handleApprove = () => {
+   setIsAllowed(true)
+   approve();
   }
   const handleCopy = () => {
     navigator.clipboard.writeText(getfullURL).then(() => {
@@ -115,6 +119,7 @@ const Dashboard = () => {
 //   })
 // }
 
+// console.log()
   useEffect(() => {
     const timer = setTimeout(() => {
       if (registerWaitForTransactionReceipt) {
@@ -166,9 +171,17 @@ const Dashboard = () => {
   useEffect(() => {
     userInfomation().then((e) => {
       const c = parseUserInfo(e as any || [])
-      setCurrentLevel(Number(c.level))
-      setInvestmentAmount(packages[Number(c.level)])
+      if (c.level === BigInt(packages.length)) {
+        setPackageId(Number(c.level) - 1)
+        setInvestmentAmount(packages[Number(c.level)-1])
+        setCurrentLevel(Number(c.level) - 1)
+      }else if(c.level < BigInt(packages.length)) {
+        setPackageId(Number(c.level))
+        setInvestmentAmount(packages[Number(c.level)])
+        setCurrentLevel(Number(c.level))
+      }
       setParsedUserInfo(c);
+      setMaxLevel((Number(c.level)) === 12);
       setIsAllowed(false)
     })
   }, [userId])
@@ -176,13 +189,22 @@ const Dashboard = () => {
   useEffect(() => {
     setuserAvailableToClaimed([userAvailableToClaim1, userAvailableToClaim2, userAvailableToClaim3, userAvailableToClaim4])
   }, [claimDividendWaitForTransactionReceipt, userAvailableToClaim1])
+
   useEffect(() => {
     userInfomation().then((e) => {
       const c = parseUserInfo(e as any || [])
-      setInvestmentAmount(packages[Number(c.level)])
-      setCurrentLevel(Number(c.level))
+      if (c.level === BigInt(packages.length)) {
+        setPackageId(Number(c.level) - 1)
+        setCurrentLevel(Number(c.level) - 1)
+        setInvestmentAmount(packages[Number(c.level)-1])
+      }else if(c.level < BigInt(packages.length)) {
+        setPackageId(Number(c.level))
+        setInvestmentAmount(packages[Number(c.level)])
+        setCurrentLevel(Number(c.level))
+      }
       setParsedUserInfo(c);
       setIsAllowed(false)
+      setMaxLevel((Number(c.level)) === 12);
     })
   }, [registerWaitForTransactionReceipt, upgradeWaitForTransactionReceipt]);
 
@@ -201,7 +223,6 @@ const Dashboard = () => {
       handleInvest()
     }
   }, [approveWaitForTransactionReceipt]);
-
   return (
     <div className="">
       <div className="px-3 md:px-28 py-20 flex flex-col  pt-20">
@@ -230,7 +251,7 @@ const Dashboard = () => {
                   <button
                     key={index}
                     onClick={() => { setInvestmentAmount(item); setPackageId(index + 1); }}
-                    disabled={(Number(parsedUserInfo.level)) !== (index)}
+                    disabled={(Number(parsedUserInfo.level)) !== (index) || maxLevel }
                     className={`py-2 px-4 rounded-md  font-semibold ${currentLevel === (index) ? 'bg-primary cursor-pointer text-white' : currentLevel > (index) ? 'bg-gray-300 text-gray-500 cursor-not-allowed bg-opacity-40' : 'bg-gray-400 cursor-not-allowed text-white'
                       }`}
                   >
@@ -244,24 +265,17 @@ const Dashboard = () => {
               </div>
               <button
                 onClick={handleApprove}
-                disabled={Number(parseEther(investmentAmount)) === 0 || isAllowed}
-                className={`w-full py-2 rounded-lg text-lg font-semibold bg-primary ${Number(parseEther(investmentAmount)) === 0 || isApprovePending || isRegisterPending || isUpgradePending || isAllowed ? "outline-none opacity-50 cursor-not-allowed " : isUpgradeError || isRegisterError ? "outline-none  bg-red-500 text-white" : "text-white cursor-pointer"}`}
+                disabled={Number(parseEther(investmentAmount|| "0")) === 0 || isAllowed || maxLevel} 
+                className={`w-full py-2 rounded-lg text-lg font-semibold bg-primary ${Number(parseEther(investmentAmount|| "0")) === 0 || isApprovePending || isRegisterPending || isUpgradePending || isAllowed || maxLevel ? "outline-none opacity-50 cursor-not-allowed " : isUpgradeError || isRegisterError ? "outline-none  bg-red-500 text-white" : "text-white cursor-pointer"}`}
               >
-                {isApprovePending || isRegisterPending || isUpgradePending || isAllowed ? <span className="animate-pulse transition-all ease-in-out">Proccessing...</span> : `Approve ${investmentAmount} USDT`}
+                {isApprovePending || isRegisterPending || isUpgradePending || isAllowed ? <span className="animate-pulse transition-all ease-in-out">Proccessing...</span> : maxLevel? "Max Level" : `Approve ${investmentAmount} USDT`}
               </button>
 
               <div className="flex bg-neutral-100 rounded-md p-2 justify-between">
                 <p>Total Missed Income</p>
                 <p className="text-gray-600">${formatEther(BigInt(getMissedIncome?.toString()|| "0"))}</p>
               </div>
-              {/* <div className=" bg-white w-full rounded-lg py-5 px-3 flex flex-col gap-5 ">
-                <div className="flex justify-between">
-                  <p className="font-bold text-lg">Missed Income:</p>
-                  <p className="text-gray-700 ml-1">${}</p>
-                </div>
-
-              </div> */}
-              {/* <p className="">{`${approveWaitForTransactionReceipt? "Approved" : "Not Approved"} ${approveWaitForTransactionReceipt}` }</p> */}
+            
             </div>
           </div>
           <div>

@@ -1,5 +1,7 @@
+// Main contract 0x5642722df0D957B0FF5C746cc68601ef92916452
+// Test contract 
 export const byForexConfig = {
-  address: "0x1766Ba5bE85AF07d7F6F90f0BD64F707ab519FD0",
+  address: "0x5642722df0D957B0FF5C746cc68601ef92916452",
   abi:[
     {
       "inputs": [
@@ -1006,9 +1008,10 @@ export const byForexConfig = {
     }
   ] as const
 };
-
+// Main Contract 0x55d398326f99059fF775485246999027B3197955
+// Test Contract 
 export const tokenConfig = {
-  address: "0x25ed48E0f7B9Be6024866A4eF4a3882333181517",
+  address: "0x55d398326f99059fF775485246999027B3197955",
   abi:[
     {
       "inputs": [
