@@ -1,51 +1,84 @@
-# React + TypeScript + Vite
+# byfx - GRich Investment Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A decentralized investment and referral platform built on Binance Smart Chain (BSC) that enables users to invest in USDT, earn cashback in GRich tokens, and participate in a multi-level referral system with royalty rewards.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Wallet Integration**: Connect with MetaMask, Trust Wallet, Rainbow, Binance Wallet, and WalletConnect
+- **Investment System**: Invest USDT with a minimum $6 activation fee
+- **TopUp Wallet**: Use accumulated rewards for reinvestment
+- **Referral Program**: Multi-level referral system with unique referral links
+- **Royalty Pool**: Earn from the global royalty pool based on eligibility
+- **Cashback Rewards**: Receive GRich tokens as cashback on investments
+- **Transaction History**: Track all investments and referral activities
+- **Real-time Updates**: Live blockchain data synchronization
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Frontend**: React 18 + TypeScript + Vite
+- **Styling**: TailwindCSS + Framer Motion
+- **Web3**: Wagmi + Viem + RainbowKit
+- **Blockchain**: Binance Smart Chain Testnet
+- **State Management**: TanStack Query
+- **Icons**: Lucide React + React Icons
+- **Notifications**: React Hot Toast
 
-- Configure the top-level `parserOptions` property like this:
+## Getting Started
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+- MetaMask or compatible Web3 wallet
+- BSC Testnet USDT tokens
+
+### Installation
+
+```bash
+npm install
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### Development
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+npm run dev
 ```
-# byfx
+
+### Build
+
+```bash
+npm run build
+```
+
+### Preview
+
+```bash
+npm run preview
+```
+
+## Project Structure
+
+```
+src/
+├── components/       # React components (Hero, Navbar, ReferralList, TransactionList)
+├── hooks/           # Custom hooks (useContract)
+├── abi.ts           # Smart contract ABIs
+├── wagmi.ts         # Wagmi configuration
+└── App.tsx          # Main application component
+```
+
+## Smart Contract Integration
+
+The platform interacts with two main contracts:
+- **Investment Contract**: Handles deposits, referrals, and reward distribution
+- **USDT Token Contract**: ERC-20 token for investments
+
+## Environment
+
+- **Network**: BSC Testnet
+- **RPC**: Default BSC Testnet RPC
+- **WalletConnect Project ID**: Configured in wagmi.ts
+
+## License
+
+MIT
